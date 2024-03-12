@@ -1,11 +1,7 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 using MAVE.Models;
+using MAVE.Repositories;
+using MAVE.Utilities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver;
 
 
 namespace MAVE.Controllers
@@ -15,11 +11,15 @@ namespace MAVE.Controllers
     public class UserController : ControllerBase
     {
         private readonly DbAa60a4MavetestContext _context;
+        private readonly UserRepositories _repo;
+        private readonly TokenAndEncipt _token;
         private readonly IConfiguration _config;
 
-        public UserController (DbAa60a4MavetestContext context, IConfiguration configuration){
+        public UserController (DbAa60a4MavetestContext context, IConfiguration configuration, UserRepositories repo, TokenAndEncipt token){
             _context = context;
             _config = configuration;
+            _repo = repo;
+            _token = token;
         }
         [HttpDelete]
         [Route("Delete")]
@@ -28,12 +28,11 @@ namespace MAVE.Controllers
             {
                 return NotFound();
             }
-            var userDelete = await _context.Users.FindAsync(id);
+            var userDelete = await _repo.GetUserByID(id);
             if (userDelete != null)
             {
-                _context.Remove(userDelete);
+                await _repo.DeleteUser(userDelete);
             }
-            await _context.SaveChangesAsync();
             return Ok();
         }
         [HttpPut]
@@ -42,11 +41,10 @@ namespace MAVE.Controllers
             if (user.NameU == string.Empty){
                 ModelState.AddModelError("Nombre","El nombre no puede estar vacio");
             }
-            var userU =await _context.Users.FindAsync(user.Id);
+            var userU = _repo.GetUserByID(user.Id);
             if (userU == null)return NotFound();
-            user.Pass= HashPass(user.Pass);
-            _context.Users.Update(user);
-            await _context.SaveChangesAsync();
+            user.Pass= TokenAndEncipt.HashPass(user.Pass);
+            await _repo.UpdateUser(user);
             return Ok();
             
         }
@@ -64,55 +62,31 @@ namespace MAVE.Controllers
                     ModelState.AddModelError("Password","La verificación de contraseña no coincide");
                 }   
             }
-            var userC = await _context.Users.Where(c => c.Email ==user.Email).FirstOrDefaultAsync();
+            var userC = _repo.GetUserByMail(user.Email);
             if (userC != null)
             {
                 ModelState.AddModelError("Email","La direccion de Email ya existe en el sistema");
             }
-            user.Pass = HashPass(user.Pass);
-            _context.Add(user);
-            _context.SaveChanges(); 
+            user.Pass = TokenAndEncipt.HashPass(user.Pass);
+            await _repo.CreateUser(user);
             return Ok(Created("created",true));
         }
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn([FromBody] User usuario){
-            var UserAct = await _context.Users.Where(u => u.Email == usuario.Email).FirstOrDefaultAsync();
+        public async Task<IActionResult> LogIn([FromBody] User user){
+            var UserAct = await _repo.GetUserByMail(user.Email);
             var password = UserAct.Pass;
             if (UserAct == null)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""});
-            }else if (BCrypt.Net.BCrypt.Verify(usuario.Pass,password))
+            }else if (BCrypt.Net.BCrypt.Verify(user.Pass,password))
             {
-                var token = GenerarToken(usuario.Email);
+                var token = _token.GenerarToken(user.Email);
                 return StatusCode(StatusCodes.Status200OK , new {tokenCompleto = token});
             }else
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""});
             } 
-            
-            
-        }
-
-        public static string HashPass(string HashPass){
-            string PassEn = BCrypt.Net.BCrypt.HashPassword(HashPass, BCrypt.Net.BCrypt.GenerateSalt());
-            return PassEn;
-        }
-        private string GenerarToken(string mail){
-            var SecretKey = _config.GetSection("Key").GetSection("secretKey").ToString();
-            #pragma warning disable CS8604 // Possible null reference argument.
-            var security= Encoding.ASCII.GetBytes(SecretKey);
-            #pragma warning restore CS8604 // Possible null reference argument.
-            var tokenDescriptor = new SecurityTokenDescriptor{
-                Subject = new ClaimsIdentity(new []{
-                    new Claim(ClaimTypes.Email,mail)
-                }),
-                Expires = DateTime.UtcNow.AddHours(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(security), SecurityAlgorithms.HmacSha256Signature) 
-            };
-            var TokenHandler = new JwtSecurityTokenHandler();
-            var token = TokenHandler.CreateToken(tokenDescriptor);
-            return TokenHandler.WriteToken(token); 
         }
     }
 }

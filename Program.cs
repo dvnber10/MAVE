@@ -3,6 +3,8 @@ using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using MAVE.Repositories;
+using MAVE.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<UserRepositories>();
+builder.Services.AddScoped<TokenAndEncipt>();
 builder.Configuration.AddJsonFile("appsettings.json");
 var SecretKey = builder.Configuration.GetSection("Settings").GetSection("SecretKey").ToString();
 var Byteskey = Encoding.UTF8.GetBytes(SecretKey);
@@ -27,6 +31,7 @@ builder.Services.AddAuthentication(config => {
         ValidateAudience = false
     };
 });
+
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DbAa60a4MavetestContext>(op=>op.UseSqlServer(builder.Configuration.GetConnectionString("Base")));
