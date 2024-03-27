@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj": {}
+    "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj": {}
   },
   "projects": {
-    "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj": {
+    "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj",
+        "projectUniqueName": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj",
         "projectName": "MAVE",
-        "projectPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj",
-        "packagesPath": "/home/dvn/.nuget/packages/",
-        "outputPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/obj/",
+        "projectPath": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj",
+        "packagesPath": "C:\\Users\\osfel\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/dvn/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\osfel\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -32,6 +34,9 @@
           "warnAsError": [
             "NU1605"
           ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "default"
         }
       },
       "frameworks": {
@@ -41,6 +46,10 @@
             "BCrypt.Net-Next": {
               "target": "Package",
               "version": "[4.0.3, )"
+            },
+            "Microsoft.AspNet.Mvc": {
+              "target": "Package",
+              "version": "[5.3.0, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -86,12 +95,6 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.2, 8.0.2]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
@@ -100,7 +103,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.103/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
