@@ -1,7 +1,7 @@
 using MAVE.Models;
-using MAVE.Repositories;
 using MAVE.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using MAVE.Services;
 
 
 namespace MAVE.Controllers
@@ -10,80 +10,85 @@ namespace MAVE.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly DbAa60a4MavetestContext _context;
-        private readonly UserRepositories _repo;
-        private readonly TokenAndEncipt _token;
         private readonly IConfiguration _config;
+        private readonly UserService _serv;
+        private readonly TokenAndEncipt _token;
 
-        public UserController (DbAa60a4MavetestContext context, IConfiguration configuration, UserRepositories repo, TokenAndEncipt token){
-            _context = context;
+        public UserController (UserService serv, IConfiguration configuration, TokenAndEncipt token){
             _config = configuration;
-            _repo = repo;
+            _serv = serv;
             _token = token;
         }
         [HttpDelete]
-        [Route("Delete")]
+        [Route("DeleteUser")]
         public async Task<IActionResult>Delete(int? id){
-            if (id == null || _context.Users == null)
+            if (await _serv.UserDelete(id))
+            {
+                return Ok();
+            }
+            else
             {
                 return NotFound();
             }
-            var userDelete = await _repo.GetUserByID(id);
-            if (userDelete != null)
-            {
-                await _repo.DeleteUser(userDelete);
-            }
-            return Ok();
         }
+
         [HttpPut]
         [Route("UpdateUser")]
-        public async Task<IActionResult>Update([FromForm] User user){
-            if (user.NameU == string.Empty){
-                ModelState.AddModelError("Nombre","El nombre no puede estar vacio");
+        public async Task<IActionResult> UserUpdate([FromForm] UserModel user){
+            if (user.NameU == string.Empty)
+            {
+                ModelState.AddModelError("Nombre", "El nombre no puede estar vacio");
             }
-            var userU = _repo.GetUserByID(user.Id);
-            if (userU == null)return NotFound();
-            user.Pass= TokenAndEncipt.HashPass(user.Pass);
-            await _repo.UpdateUser(user);
-            return Ok();
+            if (await _serv.UpdateUser(user))
+            {
+                return Ok();
+            }
+            else
+            {
+                return NotFound();
+            }
             
         }
+
         [HttpPost]
         [Route("SigIn")]
-        public async Task<IActionResult>SigIn([FromForm] User user){
+        public async Task<IActionResult> SigIn([FromForm] UserModel user){
             var password = HttpContext.Request.Form["password"];
             var CPass = HttpContext.Request.Form["confpassword"];
             if (user == null) return BadRequest();
             if (user.NameU == string.Empty)
             {
-                ModelState.AddModelError("Nombre","Nombre no puede estar vacio");
+                ModelState.AddModelError("Nombre", "Nombre no puede estar vacio");
                 if (password != CPass)
                 {
-                    ModelState.AddModelError("Password","La verificación de contraseña no coincide");
-                }   
+                    ModelState.AddModelError("Password", "La verificación de contraseña no coincide");
+                }
             }
-            var userC = _repo.GetUserByMail(user.Email);
-            if (userC != null)
+            if(await _serv.CreateUser(user))
             {
-                ModelState.AddModelError("Email","La direccion de Email ya existe en el sistema");
+                return Ok(Created("created", true));
             }
-            user.Pass = TokenAndEncipt.HashPass(user.Pass);
-            await _repo.CreateUser(user);
-            return Ok(Created("created",true));
+            else
+            {
+                return BadRequest(); 
+            }
         }
+
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn([FromBody] User user){
-            var UserAct = await _repo.GetUserByMail(user.Email);
-            var password = UserAct.Pass;
-            if (UserAct == null)
+        public async Task<IActionResult> LogIn([FromBody] UserModel user)
+        {
+            var res = await _serv.LogIn(user);
+            if (res == 0)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""});
-            }else if (BCrypt.Net.BCrypt.Verify(user.Pass,password))
+            }
+            else if (res == 1)
             {
                 var token = _token.GenerarToken(user.Email);
                 return StatusCode(StatusCodes.Status200OK , new {tokenCompleto = token});
-            }else
+            }
+            else 
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""});
             } 
