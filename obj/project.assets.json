@@ -4810,11 +4810,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj",
+      "projectUniqueName": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj",
       "projectName": "MAVE",
-      "projectPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE.csproj",
+      "projectPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj",
       "packagesPath": "/home/dvn/.nuget/packages/",
-      "outputPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/obj/",
+      "outputPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/dvn/.nuget/NuGet/NuGet.Config"
@@ -4892,7 +4892,7 @@
         "downloadDependencies": [
           {
             "name": "Microsoft.AspNetCore.App.Ref",
-            "version": "[8.0.2, 8.0.2]"
+            "version": "[8.0.3, 8.0.3]"
           }
         ],
         "frameworkReferences": {
@@ -4903,7 +4903,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.102/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.103/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
