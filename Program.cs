@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MAVE.Repositories;
 using MAVE.Utilities;
+using MAVE.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,9 +15,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepositories>();
 builder.Services.AddScoped<TokenAndEncipt>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<EmailUtility>();
 builder.Configuration.AddJsonFile("appsettings.json");
 var SecretKey = builder.Configuration.GetSection("Settings").GetSection("SecretKey").ToString();
+#pragma warning disable CS8604 // Possible null reference argument.
 var Byteskey = Encoding.UTF8.GetBytes(SecretKey);
+#pragma warning restore CS8604 // Possible null reference argument.
 
 builder.Services.AddAuthentication(config => {
     config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
