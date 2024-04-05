@@ -15,14 +15,15 @@ namespace MAVE.Utilities
             string PassEn = BCrypt.Net.BCrypt.HashPassword(HashPass, BCrypt.Net.BCrypt.GenerateSalt());
             return PassEn;
         }
-        public string GenerarToken(string mail){
+        public string GenerarToken(string mail, string rol){
             var SecretKey = _config.GetSection("Key").GetSection("secretKey").ToString();
             #pragma warning disable CS8604 // Possible null reference argument.
             var security= Encoding.ASCII.GetBytes(SecretKey);
             #pragma warning restore CS8604 // Possible null reference argument.
             var tokenDescriptor = new SecurityTokenDescriptor{
                 Subject = new ClaimsIdentity(new []{
-                    new Claim(ClaimTypes.Email,mail)
+                    new Claim(ClaimTypes.Email,mail),
+                    new Claim(ClaimTypes.Role,rol)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(security), SecurityAlgorithms.HmacSha256Signature) 

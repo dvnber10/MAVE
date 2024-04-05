@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MAVE.Repositories;
 using MAVE.Utilities;
+using MAVE.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +14,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepositories>();
+builder.Services.AddScoped<QuestionRepository>();
+builder.Services.AddScoped<QuestionService>();
 builder.Services.AddScoped<TokenAndEncipt>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<EmailUtility>();
 builder.Configuration.AddJsonFile("appsettings.json");
 var SecretKey = builder.Configuration.GetSection("Settings").GetSection("SecretKey").ToString();
+#pragma warning disable CS8604 // Possible null reference argument.
 var Byteskey = Encoding.UTF8.GetBytes(SecretKey);
+#pragma warning restore CS8604 // Possible null reference argument.
 
 builder.Services.AddAuthentication(config => {
     config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -36,6 +43,11 @@ builder.Services.AddAuthentication(config => {
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DbAa60a4MavetestContext>(op=>op.UseSqlServer(builder.Configuration.GetConnectionString("Base")));
 
+builder.Services.AddCors(options=>{
+    options.AddPolicy ("NuevaPolitica", app=>{
+        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,6 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("NuevaPolitica");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
