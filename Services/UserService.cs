@@ -34,6 +34,10 @@ namespace MAVE.Services
             return true;
         }
 
+        public async Task<User> GetUserByMail(string email){
+            return await _repo.GetUserByMail(email);
+        }
+
         //Update users method
         public async Task<bool> UpdateUser(UserSigInDTO user)
         {
