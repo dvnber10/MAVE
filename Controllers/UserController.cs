@@ -94,10 +94,10 @@ namespace MAVE.Controllers
         }
         [HttpPost]
         [Route ("PasswordRecovery")]
-        public async Task<IActionResult> RecoveryPass (string email){
+        public async Task<IActionResult> RecoveryPass (RecoveryPassDTO email){
             try
             {
-                await _serv.RecoveryPass(email);
+                await _serv.RecoveryPass(email.Email);
                 return Ok("Email enviado Revisa tu correo electronico");
             }
             catch (System.Exception ex)
