@@ -25,9 +25,9 @@ public partial class User
 
     public virtual CatEvaluation Evaluation { get; set; } = null!;
 
-    public virtual ICollection<HabitUser> HabitUsers { get; set; } = new List<HabitUser>();
-
     public virtual ICollection<Mood> Moods { get; set; } = new List<Mood>();
+
+    public virtual ICollection<QuestionUser> QuestionUsers { get; set; } = new List<QuestionUser>();
 
     public virtual CatRole Role { get; set; } = null!;
 }

@@ -41,6 +41,11 @@ builder.Services.AddAuthentication(config => {
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DbAa60a4MavetestContext>(op=>op.UseSqlServer(builder.Configuration.GetConnectionString("Base")));
 
+builder.Services.AddCors(options=>{
+    options.AddPolicy ("NuevaPolitica", app=>{
+        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -50,6 +55,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("NuevaPolitica");
 
 app.UseHttpsRedirection();
 app.UseAuthentication();

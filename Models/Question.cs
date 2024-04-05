@@ -17,5 +17,5 @@ public partial class Question
 
     public virtual CatQuestion CatQuestion { get; set; } = null!;
 
-    public virtual ICollection<HabitUser> HabitUsers { get; set; } = new List<HabitUser>();
+    public virtual ICollection<QuestionUser> QuestionUsers { get; set; } = new List<QuestionUser>();
 }
