@@ -40,7 +40,7 @@ namespace MAVE.Services
             var userU = new User{
                     UserId=1,
                     Name = user.UserName,
-                    Phone = Convert.ToString(user.Phone),
+                    Phone = user.Phone,
                     Password = user.Password,
                     RoleId = 1,
                     EvaluationId = 1
@@ -67,7 +67,7 @@ namespace MAVE.Services
                 var userU = new User{
                     Email = user.Email,
                     UserName = user.UserName,
-                    Phone = Convert.ToString(user.Phone),
+                    Phone = user.Phone,
                     Password = user.Password,
                     RoleId = 2,
                     EvaluationId = 1
