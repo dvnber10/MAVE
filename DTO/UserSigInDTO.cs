@@ -11,7 +11,7 @@ namespace MAVE.DTO
 
         public string Email { get; set; } = null!;
 
-        public int Phone { get; set; }
+        public string Phone { get; set; } = null!;
 
         public string Password { get; set; } = null!;
     }

@@ -60,10 +60,6 @@ namespace MAVE.Controllers
             if (user.UserName == string.Empty)
             {
                 ModelState.AddModelError("Nombre", "Nombre no puede estar vacio");
-                //if (password != CPass)
-                //{
-                //    ModelState.AddModelError("Password", "La verificación de contraseña no coincide");
-                //}
             }
             if(await _serv.CreateUser(user))
             {
