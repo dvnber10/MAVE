@@ -95,8 +95,16 @@ namespace MAVE.Controllers
         [HttpPost]
         [Route ("PasswordRecovery")]
         public async Task<IActionResult> RecoveryPass (string email){
-             await _serv.RecoveryPass(email);
-             return Ok("Email enviado Revisa tu correo electronico");
+            try
+            {
+                await _serv.RecoveryPass(email);
+                return Ok("Email enviado Revisa tu correo electronico");
+            }
+            catch (System.Exception )
+            {
+                return BadRequest("el email no existe en el sistema");
+                throw;
+            }
         }
         [HttpPost]
         [Route ("PasswordReset")]
