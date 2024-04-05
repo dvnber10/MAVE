@@ -63,7 +63,9 @@ namespace MAVE.Controllers
             }
             if(await _serv.CreateUser(user))
             {
-                return Ok(Created("created", true));
+                var userA = _serv.GetUserByMail(user.Email);
+                var token = _token.GenerarToken(user.Email,Convert.ToString(userA.Id));
+                return Ok(Created(token, true));
             }
             else
             {
@@ -91,13 +93,13 @@ namespace MAVE.Controllers
             } 
         }
         [HttpPost]
-        [Route ("Password Recovery")]
+        [Route ("PasswordRecovery")]
         public async Task<IActionResult> RecoveryPass (string email){
              await _serv.RecoveryPass(email);
              return Ok("Email enviado Revisa tu correo electronico");
         }
         [HttpPost]
-        [Route ("Password Reset")]
+        [Route ("PasswordReset")]
         public async Task<IActionResult> PasswordReset (string email,string pass, string repetpass ){
             if(pass !=repetpass){
               ModelState.AddModelError("Nombre", "El nombre no puede estar vacio");
