@@ -14,6 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<UserRepositories>();
+builder.Services.AddScoped<QuestionRepository>();
+builder.Services.AddScoped<QuestionService>();
 builder.Services.AddScoped<TokenAndEncipt>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EmailUtility>();

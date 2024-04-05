@@ -100,9 +100,9 @@ namespace MAVE.Controllers
                 await _serv.RecoveryPass(email);
                 return Ok("Email enviado Revisa tu correo electronico");
             }
-            catch (System.Exception )
+            catch (System.Exception ex)
             {
-                return BadRequest("el email no existe en el sistema");
+                return BadRequest("el email no existe en el sistema" + ex);
                 throw;
             }
         }
