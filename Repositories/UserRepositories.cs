@@ -33,7 +33,7 @@ namespace MAVE.Repositories
             #pragma warning restore CS8603 // Possible null reference return.
         }
         public async Task<User> GetUserByMail(string mail){
-            var userC = await _context.Users.FindAsync(mail);
+            var userC =await _context.Users.Where(e=>e.Email==mail).FirstAsync();
             if (userC != null)
             {
                 return userC;
