@@ -111,7 +111,7 @@ namespace MAVE.Services
             }
             else
             {
-                var tokenPass = _tk.GenerarToken(mail);
+                var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
                 string url = "http://localhost:5173/ResetPass/?token"+tokenPass;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,

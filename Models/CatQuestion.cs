@@ -9,5 +9,7 @@ public partial class CatQuestion
 
     public string Question { get; set; } = null!;
 
+    public bool Initial { get; set; }
+
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }

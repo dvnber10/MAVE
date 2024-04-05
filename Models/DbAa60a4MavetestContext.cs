@@ -27,11 +27,11 @@ public partial class DbAa60a4MavetestContext : DbContext
 
     public virtual DbSet<CatRole> CatRoles { get; set; }
 
-    public virtual DbSet<HabitUser> HabitUsers { get; set; }
-
     public virtual DbSet<Mood> Moods { get; set; }
 
     public virtual DbSet<Question> Questions { get; set; }
+
+    public virtual DbSet<QuestionUser> QuestionUsers { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -114,21 +114,6 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<HabitUser>(entity =>
-        {
-            entity.ToTable("HABIT_USER");
-
-            entity.HasOne(d => d.Habit).WithMany(p => p.HabitUsers)
-                .HasForeignKey(d => d.HabitId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_HABIT");
-
-            entity.HasOne(d => d.User).WithMany(p => p.HabitUsers)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_USER");
-        });
-
         modelBuilder.Entity<Mood>(entity =>
         {
             entity.ToTable("MOOD");
@@ -162,6 +147,23 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasForeignKey(d => d.CatQuestionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HABIT_CAT_QUESTION");
+        });
+
+        modelBuilder.Entity<QuestionUser>(entity =>
+        {
+            entity.HasKey(e => e.HabitUserId).HasName("PK_HABIT_USER");
+
+            entity.ToTable("QUESTION_USER");
+
+            entity.HasOne(d => d.Habit).WithMany(p => p.QuestionUsers)
+                .HasForeignKey(d => d.HabitId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HABIT_USER_HABIT");
+
+            entity.HasOne(d => d.User).WithMany(p => p.QuestionUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_HABIT_USER_USER");
         });
 
         modelBuilder.Entity<User>(entity =>

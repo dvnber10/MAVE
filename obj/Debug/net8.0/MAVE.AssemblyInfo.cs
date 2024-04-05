@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+430389938400ae5e516234ca65214470a308d70d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7de6a491770a5dac74cfc3648156f2c7746dc3e7")]
 [assembly: System.Reflection.AssemblyProductAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
