@@ -86,7 +86,7 @@ namespace MAVE.Controllers
             }
             else if (res == 1)
             {
-                var token = _token.GenerarToken(user);
+                var token = _token.GenerarToken(user,"1");
                 return StatusCode(StatusCodes.Status200OK , new {tokenCompleto = token} + "\nBienvenido");
             }
             else 
