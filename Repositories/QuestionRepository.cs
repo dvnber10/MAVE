@@ -11,7 +11,7 @@ namespace MAVE.Repositories
             _context = context;
         }
         public async Task<List<CatQuestion>>GetInitialQuestion(){
-            bool ini = false;
+            bool ini = true;
             var questions = await _context.CatQuestions.Where(e => e.Initial == ini).ToListAsync();
             return questions;
         }
