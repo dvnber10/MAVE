@@ -19,23 +19,37 @@ namespace MAVE.Repositories
 
         public async Task<int> SetInitialQuestion(List<char> answers, short result, int? Id)
         {
-            short queId = 14;
-            var user = await _context.Users.FindAsync(Id);
-            user.EvaluationId = result;
-            _context.Update(user);
-            foreach(char c in answers)
+            try
             {
-                QuestionModel question = new QuestionModel
+                DateTime date = DateTime.Now;
+                short queId = 14;
+                String a;
+                var user = await _context.Users.FindAsync(Id);
+                user.EvaluationId = result;
+                _context.Update(user);
+                _context.SaveChanges();
+                foreach (char c in answers)
                 {
-                    CatQuestionId = queId,
-                    OptionId = c,
-                    Date = DateTime.Now,
-                    UserId = Id
-                };
-                _context.Update(question);
-                queId++;
+                    a = c + "";
+                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
+                    && e.Abcd == a).FirstOrDefault();
+                    
+                    Question question = new Question
+                    {
+                        CatQuestionId = queId,
+                        OptionId = option.OptionId,
+                        Date = DateOnly.FromDateTime(date),
+                        UserId = (int)Id
+                    };
+                    _context.Update(question);
+                    _context.SaveChanges();
+                    queId++;
+                }
+                return 0;
+            }catch(Exception ex)
+            {
+                return 1;
             }
-            return 0;
         }
     }
 }

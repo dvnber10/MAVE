@@ -34,14 +34,14 @@ namespace MAVE.Services
             return true;
         }
 
-        public async Task<UserModel> GetUserByMail(string email){
+        public async Task<User> GetUserByMail(string email){
             return await _repo.GetUserByMail(email);
         }
 
         //Update users method
         public async Task<bool> UpdateUser(UserSigInDTO user)
         {
-            var userU = new UserModel{
+            var userU = new User{
                     UserId=1,
                     Name = user.UserName,
                     Phone = user.Phone,
@@ -68,7 +68,7 @@ namespace MAVE.Services
             else
             {
                 //modify user for export to database
-                var userU = new UserModel{
+                var userU = new User{
                     Email = user.Email,
                     UserName = user.UserName,
                     Phone = user.Phone,

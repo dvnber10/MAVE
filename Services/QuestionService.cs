@@ -13,12 +13,10 @@ namespace MAVE.Services
     {
         private readonly QuestionRepository _repo;
         private readonly UserRepositories _Urepo;
-        private readonly UserModel _user;
         private readonly EvaluationUtility _eva;
-        public QuestionService(QuestionRepository repository,UserRepositories userRepositories, UserModel user, EvaluationUtility eva){
+        public QuestionService(QuestionRepository repository,UserRepositories userRepositories, EvaluationUtility eva){
             _repo = repository;
             _Urepo = userRepositories;
-            _user = user;
             _eva = eva;
         }
         [Authorize (Roles="1")]
@@ -34,14 +32,28 @@ namespace MAVE.Services
 
         public async Task<int> SetIntialQuestion(List<char> answer, int? Id)
         {
-            _eva.SetAnswers(answer);
-            if(await _repo.SetInitialQuestion(answer, _eva.Score(), Id) == 1)
+            try
             {
-                return 1;
-            }
-            else
+                _eva.SetAnswers(answer);
+                if(_eva.Score() == -1)
+                {
+                    if (await _repo.SetInitialQuestion(answer, _eva.Score(), Id) == 1)
+                    {
+                        return 1;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                else
+                {
+                    return 2;
+                }
+                
+            }catch (Exception ex)
             {
-                return 0;
+                return 2;
             }
         }
     }

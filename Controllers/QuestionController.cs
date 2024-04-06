@@ -16,18 +16,29 @@ namespace MAVE.Controllers
         public QuestionController(QuestionService service){
             _serv = service;
         }
-        [HttpGet]
+        [HttpPost]
         [Route("InitialQuestions")]
-        public async Task<IActionResult> InitialQuestions(EvaluationDTO answer, int? Id){
+        public async Task<IActionResult> InitialQuestions(EvaluationDTO answer){
             //var questions = await _serv.GetInitialQuestion(id);
-            
-            if (await _serv.SetIntialQuestion(answer.Option, Id) == 1)
+            try
             {
-                return NotFound("Los datos no se guardaron");
-            }else
+                if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
+                {
+                    return BadRequest("Los datos no se guardaron");
+                }
+                else if(await _serv.SetIntialQuestion(answer.Option, answer.Id) == 0)
+                {
+                    return Ok("Los datos se guardaron exitosamente");
+                }
+                else
+                {
+                    return BadRequest("Algo salió mal durante el análisis de la evaluación"); 
+                }
+            }catch (Exception ex)
             {
-                return Ok("Los datos se guardaron exitosamente");
+                return BadRequest("Ocurrio un error: "+ex.Message);
             }
+            
         }
     }
 }

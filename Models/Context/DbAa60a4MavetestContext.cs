@@ -15,32 +15,32 @@ public partial class DbAa60a4MavetestContext : DbContext
     {
     }
 
-    public virtual DbSet<ArticleModel> Articles { get; set; }
+    public virtual DbSet<Article> Articles { get; set; }
 
-    public virtual DbSet<AuditoryModel> Auditories { get; set; }
+    public virtual DbSet<Auditory> Auditories { get; set; }
 
-    public virtual DbSet<CatArticleTypeModel> CatArticleTypes { get; set; }
+    public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
 
-    public virtual DbSet<CatEvaluationModel> CatEvaluations { get; set; }
+    public virtual DbSet<CatEvaluation> CatEvaluations { get; set; }
+
+    public virtual DbSet<CatOption> CatOptions { get; set; }
 
     public virtual DbSet<CatQuestion> CatQuestions { get; set; }
 
-    public virtual DbSet<CatRoleModel> CatRoles { get; set; }
+    public virtual DbSet<CatRole> CatRoles { get; set; }
 
-    public virtual DbSet<MoodModel> Moods { get; set; }
+    public virtual DbSet<Mood> Moods { get; set; }
 
-    public virtual DbSet<QuestionModel> Questions { get; set; }
+    public virtual DbSet<Question> Questions { get; set; }
 
-    public virtual DbSet<QuestionUserModel> QuestionUsers { get; set; }
-
-    public virtual DbSet<UserModel> Users { get; set; }
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:Base");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ArticleModel>(entity =>
+        modelBuilder.Entity<Article>(entity =>
         {
             entity.ToTable("ARTICLE");
 
@@ -60,7 +60,7 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasConstraintName("FK_ARTICLE_USER");
         });
 
-        modelBuilder.Entity<AuditoryModel>(entity =>
+        modelBuilder.Entity<Auditory>(entity =>
         {
             entity.HasKey(e => e.AuditId);
 
@@ -74,7 +74,7 @@ public partial class DbAa60a4MavetestContext : DbContext
             entity.Property(e => e.OldValue).HasMaxLength(255);
         });
 
-        modelBuilder.Entity<CatArticleTypeModel>(entity =>
+        modelBuilder.Entity<CatArticleType>(entity =>
         {
             entity.HasKey(e => e.TypeId);
 
@@ -85,7 +85,7 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsFixedLength();
         });
 
-        modelBuilder.Entity<CatEvaluationModel>(entity =>
+        modelBuilder.Entity<CatEvaluation>(entity =>
         {
             entity.HasKey(e => e.EvaluationId);
 
@@ -96,6 +96,26 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<CatOption>(entity =>
+        {
+            entity.HasKey(e => e.OptionId);
+
+            entity.ToTable("CAT_OPTION");
+
+            entity.Property(e => e.Abcd)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.EvaOption).HasColumnType("text");
+            entity.Property(e => e.Value)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.CatQuestion).WithMany(p => p.CatOptions)
+                .HasForeignKey(d => d.CatQuestionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CAT_OPTION_CAT_QUESTION");
+        });
+
         modelBuilder.Entity<CatQuestion>(entity =>
         {
             entity.ToTable("CAT_QUESTION");
@@ -103,7 +123,7 @@ public partial class DbAa60a4MavetestContext : DbContext
             entity.Property(e => e.Question).HasColumnType("text");
         });
 
-        modelBuilder.Entity<CatRoleModel>(entity =>
+        modelBuilder.Entity<CatRole>(entity =>
         {
             entity.HasKey(e => e.RoleId);
 
@@ -114,7 +134,7 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsUnicode(false);
         });
 
-        modelBuilder.Entity<MoodModel>(entity =>
+        modelBuilder.Entity<Mood>(entity =>
         {
             entity.ToTable("MOOD");
 
@@ -128,45 +148,28 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasConstraintName("FK_MOOD_USER");
         });
 
-        modelBuilder.Entity<QuestionModel>(entity =>
+        modelBuilder.Entity<Question>(entity =>
         {
             entity.HasKey(e => e.QuestionId).HasName("PK_HABIT");
 
             entity.ToTable("QUESTION");
 
-            entity.Property(e => e.EvaluationMax)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength();
-            entity.Property(e => e.EvaluationMin)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength();
-
             entity.HasOne(d => d.CatQuestion).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.CatQuestionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HABIT_CAT_QUESTION");
-        });
 
-        modelBuilder.Entity<QuestionUserModel>(entity =>
-        {
-            entity.HasKey(e => e.HabitUserId).HasName("PK_HABIT_USER");
+            entity.HasOne(d => d.Option).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.OptionId)
+                .HasConstraintName("FK_QUESTION_CAT_OPTION");
 
-            entity.ToTable("QUESTION_USER");
-
-            entity.HasOne(d => d.Habit).WithMany(p => p.QuestionUsers)
-                .HasForeignKey(d => d.HabitId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_HABIT");
-
-            entity.HasOne(d => d.User).WithMany(p => p.QuestionUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_USER");
+                .HasConstraintName("FK_QUESTION_USER");
         });
 
-        modelBuilder.Entity<UserModel>(entity =>
+        modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK_User");
 

@@ -6,5 +6,6 @@ namespace MAVE.DTO
     {
         //Opcion elegida por el usuario
         public List<char> Option { get; set; } = null;
+        public int? Id { get; set; }
     }
 }
