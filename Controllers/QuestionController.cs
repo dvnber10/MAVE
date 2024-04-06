@@ -17,7 +17,7 @@ namespace MAVE.Controllers
         }
         [HttpGet]
         [Route("InitialQuestions")]
-        public async Task<IActionResult> InitialQuestions(int id){
+        public async Task<IActionResult> InitialQuestions(int? id){
             var questions = await _serv.GetInitialQuestion(id);
             if (questions == null)
             {

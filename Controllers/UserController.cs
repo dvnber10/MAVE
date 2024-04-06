@@ -75,16 +75,16 @@ namespace MAVE.Controllers
 
         [HttpPost]
         [Route("LogIn")]
-        public async Task<IActionResult> LogIn(string user, string pass)
+        public async Task<IActionResult> LogIn([FromBody] UserLogInDTO rest)
         {
-            var res = await _serv.LogIn(user, pass);
+            var res = await _serv.LogIn(rest.Email, rest.Pass);
             if (res == 0)
             {
                 return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""}+ "\nError Usuario no existe en el sistema");
             }
             else if (res == 1)
             {
-                var token = _token.GenerarToken(user,"1");
+                var token = _token.GenerarToken(rest.Email,"1");
                 return StatusCode(StatusCodes.Status200OK , new {tokenCompleto = token} + "\nBienvenido");
             }
             else 
@@ -94,7 +94,7 @@ namespace MAVE.Controllers
         }
         [HttpPost]
         [Route ("PasswordRecovery")]
-        public async Task<IActionResult> RecoveryPass (RecoveryPassDTO email){
+        public async Task<IActionResult> RecoveryPass ([FromBody] RecoveryPassDTO email){
             try
             {
                 await _serv.RecoveryPass(email.Email);
@@ -108,11 +108,8 @@ namespace MAVE.Controllers
         }
         [HttpPost]
         [Route ("PasswordReset")]
-        public async Task<IActionResult> PasswordReset (string email,string pass, string repetpass ){
-            if(pass !=repetpass){
-              ModelState.AddModelError("Nombre", "El nombre no puede estar vacio");
-              return BadRequest("Completa todos los campos");
-            }else if (await _serv.ResetPass(email,pass)==1 )
+        public async Task<IActionResult> PasswordReset ([FromBody] UserLogInDTO rest ){
+            if (await _serv.ResetPass(rest.Email,rest.Pass)==1 )
             {
                 return Ok("Contraseña cambiada correctamente");
             }else{
