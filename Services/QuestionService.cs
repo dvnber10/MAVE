@@ -17,9 +17,9 @@ namespace MAVE.Services
             _Urepo = userRepositories;
         }
         [Authorize (Roles="1")]
-        public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
+        public async Task<List<CatQuestion>?> GetInitialQuestion(int? id){
             var user = await _Urepo.GetUserByID(id);
-            if (user.EvaluationId==1)
+            if (user.EvaluationId!=1)
             {
                 return null;
             }else{
