@@ -1,31 +1,32 @@
 ﻿using MAVE.DTO;
+using Org.BouncyCastle.Crypto.Digests;
 
 namespace MAVE.Utilities
 {
     public class EvaluationUtility
     {
-        private List<EvaluationDTO> Answers;
-        public List<EvaluationDTO> GetAnswers() 
+        private List<char> Answers;
+        public List<char> GetAnswers() 
         {
             return Answers;
         }
-        public void SetAnswers(List<EvaluationDTO> answers)
+        public void SetAnswers(List<char> answers)
         {
             this.Answers = answers;
         }
 
-        public int Score()
+        public short Score()
         {
             //Contadores para saber la cantidad de veces que el usuario eligió un perfil 
-            int dScore = 0, iScore = 0, sScore = 0, cScore = 0;
-            List<EvaluationDTO> results = GetAnswers();
+            int dScore = 0, iScore = 0, sScore = 0, cScore = 0, i = 1;
+            List<char> results = GetAnswers();
             //Recorre todas las respuestas y va asignando los valores de cada pregunta a su respectivo contador
-            foreach (EvaluationDTO answer in results)
+            foreach (char answer in results)
             {
-                switch (answer.Question)
+                switch (i)
                 {
                     case 1:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 sScore++;
@@ -41,7 +42,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 2:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -57,7 +58,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 3:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 break;
@@ -73,7 +74,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 4:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 cScore++;
@@ -90,7 +91,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 5:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
 
@@ -107,7 +108,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 6:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -124,7 +125,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 7:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 
@@ -141,7 +142,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 8:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -158,7 +159,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 9:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -175,7 +176,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 10:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -192,7 +193,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 11:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -209,7 +210,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 12:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 
@@ -226,7 +227,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 13:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -243,7 +244,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 14:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 cScore++;
@@ -260,7 +261,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 15:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 sScore++;
@@ -277,7 +278,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 16:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -294,7 +295,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 17:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 cScore++;
@@ -311,7 +312,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 18:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -328,7 +329,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 19:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 cScore++;
@@ -345,7 +346,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 20:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -362,7 +363,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 21:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 sScore++;
@@ -379,7 +380,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 22:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -396,7 +397,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 23:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 iScore++;
@@ -413,7 +414,7 @@ namespace MAVE.Utilities
                         }
                         break;
                     case 24:
-                        switch (answer.Option)
+                        switch (answer)
                         {
                             case 'A':
                                 dScore++;
@@ -429,7 +430,10 @@ namespace MAVE.Utilities
                                 break;
                         }
                         break;
+                    default:
+                        break;
                 }
+                i++;
             }
             //Segun la cantidad de veces seleccionado se le asigna un valor a cada contador
             switch(dScore)

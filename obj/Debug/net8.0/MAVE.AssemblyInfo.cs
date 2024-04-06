@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+98f9709a93509e24cca4e17fa5c7ed49636b7436")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0189a2a2d596dc87a6febdf72b15323e1e9bbaea")]
 [assembly: System.Reflection.AssemblyProductAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MAVE")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

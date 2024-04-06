@@ -1,15 +1,15 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj": {}
+    "C:\\Users\\osfel\\source\\repos\\MAVE\\MAVE.csproj": {}
   },
   "projects": {
-    "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj": {
+    "C:\\Users\\osfel\\source\\repos\\MAVE\\MAVE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj",
+        "projectUniqueName": "C:\\Users\\osfel\\source\\repos\\MAVE\\MAVE.csproj",
         "projectName": "MAVE",
-        "projectPath": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj",
+        "projectPath": "C:\\Users\\osfel\\source\\repos\\MAVE\\MAVE.csproj",
         "packagesPath": "C:\\Users\\osfel\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\obj\\",
         "projectStyle": "PackageReference",

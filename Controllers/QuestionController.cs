@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MAVE.DTO;
 using MAVE.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +18,15 @@ namespace MAVE.Controllers
         }
         [HttpGet]
         [Route("InitialQuestions")]
-        public async Task<IActionResult> InitialQuestions(int id){
-            var questions = await _serv.GetInitialQuestion(id);
-            if (questions == null)
+        public async Task<IActionResult> InitialQuestions(EvaluationDTO answer, int? Id){
+            //var questions = await _serv.GetInitialQuestion(id);
+            
+            if (await _serv.SetIntialQuestion(answer.Option, Id) == 1)
             {
-                return NotFound("las preguntas ya fueron contestadas por el usuario");
+                return NotFound("Los datos no se guardaron");
             }else
             {
-                return Ok(questions);
+                return Ok("Los datos se guardaron exitosamente");
             }
         }
     }

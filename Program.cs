@@ -1,11 +1,11 @@
 using System.Text;
-using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MAVE.Repositories;
 using MAVE.Utilities;
 using MAVE.Services;
+using MAVE.Models.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 

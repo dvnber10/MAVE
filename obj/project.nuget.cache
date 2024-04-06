@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "bFpWzCRe+s3RFmfxr6cw0OHsggXb6HQIdp23X14C5uhvITC9yc8ngW/w5RfCP+0FlANPfUaaSfFBoue8mUVvyw==",
+  "dgSpecHash": "zKqY/cUq3bHqhtozrTn0kUVTQAWwmJ4LkMHT53ZuW0cUeDkYW7kzDHQ9NeLck0fauk++3qnRxlZHcfV9y6bPlA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\osfel\\Source\\Repos\\MAVE\\MAVE.csproj",
+  "projectFilePath": "C:\\Users\\osfel\\source\\repos\\MAVE\\MAVE.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\osfel\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\osfel\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",
