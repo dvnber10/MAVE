@@ -9,6 +9,7 @@ namespace MAVE.Services
 {
     public class UserService
     {
+        // acess to utilities in oter folders  
         private readonly UserRepositories _repo;
         private readonly TokenAndEncipt _tk;
         private readonly EmailUtility _mail;
@@ -23,13 +24,13 @@ namespace MAVE.Services
         public async Task<bool> UserDelete(int? id)
         {
             var userDelete = await _repo.GetUserByID(id);
-            if (id == null || userDelete == null)
+            if (id == null || userDelete == null) //verify id or user not null
             {
                 return false;
             }
             if (userDelete != null)
             {
-                await _repo.DeleteUser(userDelete);
+                await _repo.DeleteUser(userDelete); // delete user of the database 
             }
             return true;
         }
@@ -41,17 +42,14 @@ namespace MAVE.Services
         //Update users method
         public async Task<bool> UpdateUser(UserSigInDTO user)
         {
+            var userI = _repo.GetUserByMail(user.Email);
+            if (userI == null) return false;
+            // modify user for add to database
             var userU = new User{
-                    UserId=1,
                     Name = user.UserName,
                     Phone = user.Phone,
-                    Password = user.Password,
-                    RoleId = 1,
-                    EvaluationId = 1
+                    Password = user.Password
                 };
-            
-            var userI = _repo.GetUserByID(userU.UserId);
-            if (userI == null) return false;
             user.Password = TokenAndEncipt.HashPass(userU.Password);
             await _repo.UpdateUser(userU);
             return true;
@@ -116,7 +114,7 @@ namespace MAVE.Services
             else
             {
                 var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
-                string url = "http://localhost:5173/ResetPass/?token"+tokenPass;
+                string url = "https://v00lqp9l-5173.use2.devtunnels.ms/ResetPassword/?token"+tokenPass;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,
                     Affair = "Recovery Password Mave",
@@ -126,8 +124,8 @@ namespace MAVE.Services
                 return 1;
             }
         }
-        public async Task<int> ResetPass(string email, string pass){
-            var userA=await _repo.GetUserByMail(email);
+        public async Task<int> ResetPass(int? id, string pass ){
+            var userA=await _repo.GetUserByID(id);
             userA.Password = TokenAndEncipt.HashPass(pass);
             await _repo.UpdateUser(userA);
             return 1;

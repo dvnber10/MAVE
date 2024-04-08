@@ -11,5 +11,7 @@ public partial class CatQuestion
 
     public bool Initial { get; set; }
 
+    public virtual ICollection<CatOption> CatOptions { get; set; } = new List<CatOption>();
+
     public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
 }

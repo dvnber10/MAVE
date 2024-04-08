@@ -11,11 +11,15 @@ public partial class Question
 
     public short CatQuestionId { get; set; }
 
-    public string? EvaluationMax { get; set; }
+    public int? OptionId { get; set; }
 
-    public string? EvaluationMin { get; set; }
+    public DateOnly Date { get; set; }
+
+    public int UserId { get; set; }
 
     public virtual CatQuestion CatQuestion { get; set; } = null!;
 
-    public virtual ICollection<QuestionUser> QuestionUsers { get; set; } = new List<QuestionUser>();
+    public virtual CatOption? Option { get; set; }
+
+    public virtual User User { get; set; } = null!;
 }
