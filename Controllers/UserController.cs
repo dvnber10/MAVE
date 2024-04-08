@@ -1,10 +1,9 @@
-using MAVE.Models;
 using MAVE.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using MAVE.Services;
 using MAVE.DTO;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using Org.BouncyCastle.Asn1.Iana;
+using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
 
 
 namespace MAVE.Controllers
@@ -23,6 +22,7 @@ namespace MAVE.Controllers
             _token = token;
         }
         [HttpDelete]
+        [Authorize]
         [Route("DeleteUser")]
         public async Task<IActionResult>Delete(int? id){
             if (await _serv.UserDelete(id))
@@ -36,6 +36,7 @@ namespace MAVE.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         [Route("UpdateUser")]
         public async Task<IActionResult> UserUpdate([FromBody] UserSigInDTO user){
             if (user.UserName == string.Empty)
@@ -65,7 +66,15 @@ namespace MAVE.Controllers
             {
                 var userA = _serv.GetUserByMail(user.Email);
                 var token = _token.GenerarToken(user.Email,Convert.ToString(userA.Id));
-                return Ok(Created(token, true));
+                var userAct = _serv.GetUserByMail(user.Email);
+                var userToken = new JsonFile{
+                    Id = Convert.ToString(userAct.Id),
+                    Token = token,
+                    Message = "Bienvenido al sistema",
+                    Status = 5000
+                };
+                var result = JsonSerializer.Serialize(userToken);
+                return Ok(Created(result,true));
             }
             else
             {
@@ -80,16 +89,32 @@ namespace MAVE.Controllers
             var res = await _serv.LogIn(rest.Email, rest.Pass);
             if (res == 0)
             {
-                return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""}+ "\nError Usuario no existe en el sistema");
+                var userToken = new JsonFile{
+                    Message = "Usuario no existe",
+                };
+                var result = JsonSerializer.Serialize(userToken);
+                return StatusCode(StatusCodes.Status404NotFound, result);
             }
             else if (res == 1)
             {
-                var token = _token.GenerarToken(rest.Email,"1");
-                return StatusCode(StatusCodes.Status200OK , new {tokenCompleto = token} + "\nBienvenido");
+                var userAct = _serv.GetUserByMail(rest.Email);
+                var token = _token.GenerarToken(rest.Email,Convert.ToString(userAct.Id));
+                var userToken = new JsonFile{
+                    Id = Convert.ToString(userAct.Id),
+                    Token = token,
+                    Message = "Bienvenido al sistema",
+                    Status = 5000
+                };
+                var result = JsonSerializer.Serialize(userToken);
+                return StatusCode(StatusCodes.Status200OK , result);
             }
             else 
             {
-                return StatusCode(StatusCodes.Status401Unauthorized, new {TokenCompleto =""}+ "\nCredenciales incorrectas");
+                var userToken = new JsonFile{
+                    Message = "Usuario y contraseña incorrectas"
+                };
+                var result = JsonSerializer.Serialize(userToken);
+                return StatusCode(StatusCodes.Status401Unauthorized, result);
             } 
         }
         [HttpPost]
@@ -97,7 +122,7 @@ namespace MAVE.Controllers
         public async Task<IActionResult> RecoveryPass ([FromBody] RecoveryPassDTO email){
             try
             {
-                await _serv.RecoveryPass(email.Email);
+                await _serv.RecoveryPass(email.Data);
                 return Ok("Email enviado Revisa tu correo electronico");
             }
             catch (System.Exception ex)
@@ -107,9 +132,10 @@ namespace MAVE.Controllers
             }
         }
         [HttpPost]
+        [Authorize]
         [Route ("PasswordReset")]
-        public async Task<IActionResult> PasswordReset ([FromBody] UserLogInDTO rest ){
-            if (await _serv.ResetPass(rest.Email,rest.Pass)==1 )
+        public async Task<IActionResult> PasswordReset ([FromBody] RecoveryPassDTO rest, int? id ){
+            if (await _serv.ResetPass(id,rest.Data)==1 )
             {
                 return Ok("Contraseña cambiada correctamente");
             }else{

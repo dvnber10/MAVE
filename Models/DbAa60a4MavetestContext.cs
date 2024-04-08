@@ -23,15 +23,17 @@ public partial class DbAa60a4MavetestContext : DbContext
 
     public virtual DbSet<CatEvaluation> CatEvaluations { get; set; }
 
+    public virtual DbSet<CatOption> CatOptions { get; set; }
+
     public virtual DbSet<CatQuestion> CatQuestions { get; set; }
 
     public virtual DbSet<CatRole> CatRoles { get; set; }
 
+    public virtual DbSet<CatStatus> CatStatuses { get; set; }
+
     public virtual DbSet<Mood> Moods { get; set; }
 
     public virtual DbSet<Question> Questions { get; set; }
-
-    public virtual DbSet<QuestionUser> QuestionUsers { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
 
@@ -96,6 +98,26 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<CatOption>(entity =>
+        {
+            entity.HasKey(e => e.OptionId);
+
+            entity.ToTable("CAT_OPTION");
+
+            entity.Property(e => e.Abcd)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+            entity.Property(e => e.EvaOption).HasColumnType("text");
+            entity.Property(e => e.Value)
+                .HasMaxLength(1)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.CatQuestion).WithMany(p => p.CatOptions)
+                .HasForeignKey(d => d.CatQuestionId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_CAT_OPTION_CAT_QUESTION");
+        });
+
         modelBuilder.Entity<CatQuestion>(entity =>
         {
             entity.ToTable("CAT_QUESTION");
@@ -111,6 +133,17 @@ public partial class DbAa60a4MavetestContext : DbContext
 
             entity.Property(e => e.Role)
                 .HasMaxLength(30)
+                .IsUnicode(false);
+        });
+
+        modelBuilder.Entity<CatStatus>(entity =>
+        {
+            entity.HasKey(e => e.StatusId);
+
+            entity.ToTable("CAT_STATUS");
+
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
@@ -134,36 +167,19 @@ public partial class DbAa60a4MavetestContext : DbContext
 
             entity.ToTable("QUESTION");
 
-            entity.Property(e => e.EvaluationMax)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength();
-            entity.Property(e => e.EvaluationMin)
-                .HasMaxLength(1)
-                .IsUnicode(false)
-                .IsFixedLength();
-
             entity.HasOne(d => d.CatQuestion).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.CatQuestionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_HABIT_CAT_QUESTION");
-        });
 
-        modelBuilder.Entity<QuestionUser>(entity =>
-        {
-            entity.HasKey(e => e.HabitUserId).HasName("PK_HABIT_USER");
+            entity.HasOne(d => d.Option).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.OptionId)
+                .HasConstraintName("FK_QUESTION_CAT_OPTION");
 
-            entity.ToTable("QUESTION_USER");
-
-            entity.HasOne(d => d.Habit).WithMany(p => p.QuestionUsers)
-                .HasForeignKey(d => d.HabitId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_HABIT");
-
-            entity.HasOne(d => d.User).WithMany(p => p.QuestionUsers)
+            entity.HasOne(d => d.User).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HABIT_USER_USER");
+                .HasConstraintName("FK_QUESTION_USER");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -189,6 +205,11 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_USER_CAT_ROLE");
+
+            entity.HasOne(d => d.Status).WithMany(p => p.Users)
+                .HasForeignKey(d => d.StatusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_USER_CAT_STATUS");
         });
 
         OnModelCreatingPartial(modelBuilder);

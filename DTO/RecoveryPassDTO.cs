@@ -7,6 +7,6 @@ namespace MAVE.DTO
 {
     public class RecoveryPassDTO
     {
-        public string Email {get;set;} = null!;
+        public string Data {get;set;} = null!;
     }
 }
