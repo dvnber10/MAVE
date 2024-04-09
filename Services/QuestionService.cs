@@ -17,7 +17,22 @@ namespace MAVE.Services
         }
         public async Task<List<CatQuestion>?> GetHabitQuestion(int? id){
             return await _repo.GetHabitQuestion();
-        
+        }
+        public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
+            try{
+                var user = await _Urepo.GetUserByID(id);
+                if (user.EvaluationId != 1)
+                {
+                    return null;
+                }
+                else
+                {
+                    return await _repo.GetInitialQuestion();
+                }
+            }catch(System.Exception ){
+                return null;
+            }
+        }
 
         public async Task<int> SetIntialQuestion(List<char> answer, int? Id)
         {
@@ -40,7 +55,7 @@ namespace MAVE.Services
                     return 2;
                 }
                 
-            }catch (Exception ex)
+            }catch (System.Exception )
             {
                 return 2;
             }
