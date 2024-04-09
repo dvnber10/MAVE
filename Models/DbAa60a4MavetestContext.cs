@@ -17,8 +17,6 @@ public partial class DbAa60a4MavetestContext : DbContext
 
     public virtual DbSet<Article> Articles { get; set; }
 
-    public virtual DbSet<Auditory> Auditories { get; set; }
-
     public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
 
     public virtual DbSet<CatEvaluation> CatEvaluations { get; set; }
@@ -62,19 +60,19 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasConstraintName("FK_ARTICLE_USER");
         });
 
-        modelBuilder.Entity<Auditory>(entity =>
-        {
-            entity.HasKey(e => e.AuditId);
-
-            entity.ToTable("AUDITORY");
-
-            entity.Property(e => e.Action)
-                .HasMaxLength(30)
-                .IsUnicode(false);
-            entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.NewValue).HasMaxLength(255);
-            entity.Property(e => e.OldValue).HasMaxLength(255);
-        });
+        //modelBuilder.Entity<Auditory>(entity =>
+        //{
+        //    entity.HasKey(e => e.AuditId);
+//
+        //    entity.ToTable("AUDITORY");
+//
+        //    entity.Property(e => e.Action)
+        //        .HasMaxLength(30)
+        //        .IsUnicode(false);
+        //    entity.Property(e => e.Date).HasColumnType("datetime");
+        //    entity.Property(e => e.NewValue).HasMaxLength(255);
+        //    entity.Property(e => e.OldValue).HasMaxLength(255);
+        //});
 
         modelBuilder.Entity<CatArticleType>(entity =>
         {

@@ -9,8 +9,9 @@ namespace MAVE.Repositories
         public QuestionRepository(DbAa60a4MavetestContext context){
             _context = context;
         }
-        public async Task<List<CatQuestion>>GetInitialQuestion(){
-            bool ini = true;
+        public async Task<List<CatQuestion>>GetHabitQuestion(){
+            bool ini = false;
+
             var questions = await _context.CatQuestions.Where(e => e.Initial == ini).ToListAsync();
             return questions;
         }
