@@ -1,5 +1,7 @@
+
 using MAVE.DTO;
 using MAVE.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MAVE.Controllers
@@ -9,6 +11,12 @@ namespace MAVE.Controllers
     public class QuestionController : ControllerBase
     {
         private readonly QuestionService _serv;
+        public QuestionController(QuestionService serv){
+            _serv = serv;
+        }
+        [HttpGet]
+        [Authorize]
+        [Route ("InitialQuestions")]
         public async Task<IActionResult> InitialQuestions(EvaluationDTO answer){
             //var questions = await _serv.GetInitialQuestion(id);
             try
