@@ -23,7 +23,7 @@ namespace MAVE.Controllers
         }
         [HttpDelete]
         [Authorize]
-        [Route("DeleteUser")]
+        [Route("DeleteUser/{id}")]
         public async Task<IActionResult>Delete(int? id){
             if (await _serv.UserDelete(id))
             {
