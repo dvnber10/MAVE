@@ -49,6 +49,7 @@ builder.Services.AddScoped<QuestionService>();
 builder.Services.AddScoped<TokenAndEncipt>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<EmailUtility>();
+builder.Services.AddScoped<EvaluationUtility>();
 builder.Configuration.AddJsonFile("appsettings.json");
 var SecretKey = builder.Configuration.GetSection("Settings").GetSection("SecretKey").ToString();
 #pragma warning disable CS8604 // Possible null reference argument.
