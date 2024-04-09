@@ -14,11 +14,28 @@ namespace MAVE.Controllers
         public QuestionController(QuestionService serv){
             _serv = serv;
         }
+
         [HttpGet]
+        //[Authorize]
+        [Route("GetInitialEvaluation")]
+        public async Task<IActionResult> GetInitialEvaluation(int id){
+            try{
+                var questions = await _serv.GetInitialQuestion(id);
+                if(questions == null){
+                    return BadRequest("El usuario ya hizo la evaluación inicial");
+                }else{
+                    return Ok(questions);
+                }
+            }catch(Exception e){
+                return BadRequest("Ha ocurrido un error: " + e.Message);
+            }
+            
+        }
+
+        [HttpPost]
         [Authorize]
-        [Route ("InitialQuestions")]
-        public async Task<IActionResult> InitialQuestions(EvaluationDTO answer){
-            //var questions = await _serv.GetInitialQuestion(id);
+        [Route ("SetInitialEvaluation")]
+        public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer){
             try
             {
                 if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
@@ -33,11 +50,13 @@ namespace MAVE.Controllers
                 {
                     return BadRequest("Algo salió mal durante el análisis de la evaluación"); 
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return BadRequest("Ocurrio un error: "+ex.Message);
             }
-        
-    }
+        }
+
+
     }
 }

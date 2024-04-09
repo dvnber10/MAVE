@@ -15,15 +15,21 @@ namespace MAVE.Services
             _Urepo = userRepositories;
             _eva = eva;
         }
-        [Authorize (Roles="1")]
         public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
-            var user = await _Urepo.GetUserByID(id);
-            if (user.EvaluationId==1)
-            {
+            try{
+                var user = await _Urepo.GetUserByID(id);
+                if (user.EvaluationId != 1)
+                {
+                    return null;
+                }
+                else
+                {
+                    return await _repo.GetInitialQuestion();
+                }
+            }catch(Exception e){
                 return null;
-            }else{
-                return await _repo.GetInitialQuestion();
             }
+            
         }
 
         public async Task<int> SetIntialQuestion(List<char> answer, int? Id)
