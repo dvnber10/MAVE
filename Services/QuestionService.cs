@@ -26,10 +26,9 @@ namespace MAVE.Services
                 {
                     return await _repo.GetInitialQuestion();
                 }
-            }catch(Exception e){
+            }catch(Exception){
                 return null;
             }
-            
         }
 
         public async Task<int> SetIntialQuestion(List<char> answer, int? Id)
@@ -53,7 +52,7 @@ namespace MAVE.Services
                     return 2;
                 }
                 
-            }catch (Exception ex)
+            }catch (Exception)
             {
                 return 2;
             }

@@ -23,7 +23,14 @@ namespace MAVE.Repositories
                 short queId = 14;
                 String a;
                 var user = await _context.Users.FindAsync(Id);
-                user.EvaluationId = result;
+                if (user == null)
+                {
+                    return 1;
+                }
+                else 
+                {
+                    user.EvaluationId = result;
+                }
                 _context.Update(user);
                 _context.SaveChanges();
                 foreach (char c in answers)
@@ -31,7 +38,7 @@ namespace MAVE.Repositories
                     a = c + "";
                     var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
                     && e.Abcd == a).FirstOrDefault();
-                    
+                    if(option == null || Id == null) return 1;
                     Question question = new Question
                     {
                         CatQuestionId = queId,
@@ -44,7 +51,8 @@ namespace MAVE.Repositories
                     queId++;
                 }
                 return 0;
-            }catch(Exception ex)
+            }
+            catch(Exception)
             {
                 return 1;
             }
