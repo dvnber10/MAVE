@@ -1,3 +1,4 @@
+using MAVE.DTO;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,34 @@ namespace MAVE.Repositories
 
             var questions = await _context.CatQuestions.Where(e => e.Initial == ini).ToListAsync();
             return questions;
+        }
+        public async Task<int> SetHabitQuestion(int? id, HabitDTO habit)
+        {
+            try
+            {
+                var catQuestions = await _context.CatQuestions.Where(e => e.Initial == false).ToArrayAsync();
+                if(habit.Score == null || id == null) return 1;
+                int i = 0;
+                DateTime date = DateTime.Now;
+                foreach (var h in habit.Score)
+                {
+                    Question question = new Question
+                    {
+                        Score = h,
+                        Date = DateOnly.FromDateTime(date),
+                        QuestionId = catQuestions[i].CatQuestionId,
+                        UserId = (int)id
+                    };
+                    _context.Update(question);
+                    _context.SaveChanges();
+                    i++;
+                }
+                return 0;
+            }
+            catch(Exception)
+            {
+                return 1;
+            }            
         }
         public async Task<List<CatQuestion>>GetInitialQuestion(){
             bool ini = true;

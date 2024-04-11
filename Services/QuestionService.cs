@@ -1,4 +1,5 @@
 using System.Web.Mvc;
+using MAVE.DTO;
 using MAVE.Models;
 using MAVE.Repositories;
 using MAVE.Utilities;
@@ -17,6 +18,24 @@ namespace MAVE.Services
         }
         public async Task<List<CatQuestion>?> GetHabitQuestion(int? id){
             return await _repo.GetHabitQuestion();
+        }
+        public async Task<int> SetHabitQuestion(int? id, HabitDTO habit)
+        {
+            try
+            {
+                if(await _repo.SetHabitQuestion(id,habit) == 0)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+            catch(Exception)
+            {
+                return 2;
+            }
         }
         public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
             try{
@@ -56,8 +75,9 @@ namespace MAVE.Services
                 {
                     return 2;
                 }
-                
-            }catch (Exception){
+            }
+            catch (Exception)
+            {
                 return 2;
             }
         }
