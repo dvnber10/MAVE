@@ -29,7 +29,9 @@ namespace MAVE.Services
                 {
                     return await _repo.GetInitialQuestion();
                 }
-            }catch(System.Exception ){
+
+            }catch(Exception){
+
                 return null;
             }
         }
@@ -55,8 +57,7 @@ namespace MAVE.Services
                     return 2;
                 }
                 
-            }catch (System.Exception )
-            {
+            }catch (Exception)
                 return 2;
             }
         }

@@ -29,17 +29,25 @@ namespace MAVE.Repositories
                 short queId = 14;
                 String a;
                 var user = await _context.Users.FindAsync(Id);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                user.EvaluationId = result;
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                if (user == null)
+                {
+                    return 1;
+                }
+                else 
+                {
+                    user.EvaluationId = result;
+                }
+
                 _context.Update(user);
                 _context.SaveChanges();
                 foreach (char c in answers)
                 {
                     a = c + "";
-                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId && e.Abcd == a).FirstOrDefault();
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
+                    && e.Abcd == a).FirstOrDefault();
+                    if(option == null || Id == null) return 1;
+
                     Question question = new Question
                     {
                         CatQuestionId = queId,
@@ -47,13 +55,14 @@ namespace MAVE.Repositories
                         Date = DateOnly.FromDateTime(date),
                         UserId = Convert.ToInt32(Id)
                     };
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
                     _context.Update(question);
                     _context.SaveChanges();
                     queId++;
                 }
                 return 0;
-            }catch(System.Exception )
+
+            }
+            catch(Exception)
             {
                 return 1;
             }
