@@ -70,11 +70,10 @@ namespace MAVE.Controllers
                 var userToken = new JsonFile{
                     Id = Convert.ToString(userAct.Id),
                     Token = token,
-                    Message = "Bienvenido al sistema",
-                    Status = 5000
+                    Message = "Bienvenido al sistema"
                 };
                 var result = JsonSerializer.Serialize(userToken);
-                return Ok(Created(result,true));
+                return Ok(Created(token,true));
             }
             else
             {
@@ -131,15 +130,31 @@ namespace MAVE.Controllers
                 throw;
             }
         }
-        [HttpPost]
+        [HttpPut]
         [Authorize]
-        [Route ("PasswordReset")]
+        [Route ("PasswordReset/{id}")]
         public async Task<IActionResult> PasswordReset ([FromBody] RecoveryPassDTO rest, int? id ){
             if (await _serv.ResetPass(id,rest.Data)==1 )
             {
                 return Ok("Contraseña cambiada correctamente");
             }else{
                 return BadRequest("Error al actualizar");
+            }
+        }
+        [HttpGet]
+        [Authorize]
+        [Route ("GetUserInfo/{id}")]
+        public async Task<IActionResult> GetUserInfo (int? id){
+            try
+            {
+                var user = await _serv.GetUserById(id);
+                var result = JsonSerializer.Serialize(user);
+                return Ok(result);   
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex);
+                throw;
             }
         }
     }

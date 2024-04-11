@@ -15,6 +15,9 @@ namespace MAVE.Services
             _Urepo = userRepositories;
             _eva = eva;
         }
+        public async Task<List<CatQuestion>?> GetHabitQuestion(int? id){
+            return await _repo.GetHabitQuestion();
+        }
         public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
             try{
                 var user = await _Urepo.GetUserByID(id);
@@ -26,7 +29,9 @@ namespace MAVE.Services
                 {
                     return await _repo.GetInitialQuestion();
                 }
+
             }catch(Exception){
+
                 return null;
             }
         }
@@ -53,7 +58,6 @@ namespace MAVE.Services
                 }
                 
             }catch (Exception)
-            {
                 return 2;
             }
         }

@@ -1,4 +1,3 @@
-
 using MAVE.DTO;
 using MAVE.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -17,7 +16,22 @@ namespace MAVE.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("GetInitialEvaluation")]
+        [Route("HabitQuestions/{id}")]
+        public async Task<IActionResult> HabitQuestions(int? id){
+            try
+            {
+                var questions = await _serv.GetHabitQuestion(id);
+                return Ok(questions); 
+            }
+            catch (System.Exception ex)
+            {
+                return BadRequest(ex.Message);
+                throw;
+             }
+         }
+        [HttpGet]
+        [Authorize]
+        [Route("GetInitialEvaluation/{id}")]
         public async Task<IActionResult> GetInitialEvaluation(int id){
             try{
                 var questions = await _serv.GetInitialQuestion(id);
@@ -66,7 +80,10 @@ namespace MAVE.Controllers
             catch (Exception ex)
             {
                 return BadRequest("Ocurrio un error: "+ex.Message);
+
             }
+            
+            
         }
     }
 }

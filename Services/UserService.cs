@@ -72,7 +72,8 @@ namespace MAVE.Services
                     Phone = user.Phone,
                     Password = user.Password,
                     RoleId = 2,
-                    EvaluationId = 1
+                    EvaluationId = 1,
+                    StatusId = 1
                 };
                 userU.Password = TokenAndEncipt.HashPass(user.Password); // encript password for bcryp
                 await _repo.CreateUser(userU); //save changes in database
@@ -114,7 +115,7 @@ namespace MAVE.Services
             else
             {
                 var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
-                string url = "https://v00lqp9l-5173.use2.devtunnels.ms/ResetPassword/?token"+tokenPass;
+                string url = "https://bvdnxbgz-5173.use2.devtunnels.ms/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,
                     Affair = "Recovery Password Mave",
@@ -129,6 +130,9 @@ namespace MAVE.Services
             userA.Password = TokenAndEncipt.HashPass(pass);
             await _repo.UpdateUser(userA);
             return 1;
+        }
+        public async Task<User> GetUserById(int? id){
+            return await _repo.GetUserByID(id);
         }
     }
 }
