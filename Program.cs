@@ -23,12 +23,11 @@ builder.Services.AddSwaggerGen(
             Description = "Api para la gestion de usuarios y procesos para el seguimiento del estado animico"
         });
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme(){
-            Name = "Autorization",
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
-            BearerFormat = "JWT",
+            Description = "JWT Token usar Bearer {token}",
+            Name = "Authorization", 
             In = ParameterLocation.Header,
-            Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
         });
         options.AddSecurityRequirement(new OpenApiSecurityRequirement {
             {
@@ -36,9 +35,12 @@ builder.Services.AddSwaggerGen(
                     Reference = new OpenApiReference {
                         Type = ReferenceType.SecurityScheme,
                             Id = "Bearer"
-                    }
+                    },
+                    Scheme= "OAuth2",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header,
                 },
-                new string[] {}
+                new List<string> ()
             }
         });
     }
@@ -53,23 +55,44 @@ builder.Services.AddScoped<EvaluationUtility>();
 builder.Services.AddScoped<MoodService>();
 builder.Services.AddScoped<MoodRepository>();
 builder.Configuration.AddJsonFile("appsettings.json");
-var SecretKey = builder.Configuration.GetSection("Settings").GetSection("SecretKey").ToString();
+var SecretKey = builder.Configuration.GetSection("Settings").GetSection("secretKey").ToString();
 #pragma warning disable CS8604 // Possible null reference argument.
 var Byteskey = Encoding.UTF8.GetBytes(SecretKey);
 #pragma warning restore CS8604 // Possible null reference argument.
 
-builder.Services.AddAuthentication(config => {
-    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultChallengeScheme =JwtBearerDefaults.AuthenticationScheme;
-    config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}).AddJwtBearer(config => {
+//builder.Services.AddAuthentication(config => {
+//    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    config.DefaultChallengeScheme =JwtBearerDefaults.AuthenticationScheme;
+//    //config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+//}).AddJwtBearer(config => {
+//    config.RequireHttpsMetadata = false;
+//    config.SaveToken = true;
+//    config.TokenValidationParameters = new TokenValidationParameters{
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(Byteskey),
+//        ValidateIssuer= false,
+//        ValidateAudience = false,
+//        ValidateLifetime = true,
+//        ClockSkew= TimeSpan.Zero
+//    };
+//});
+builder.Services.AddAuthentication(confg =>
+{
+    confg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    confg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(config =>
+{
     config.RequireHttpsMetadata = false;
     config.SaveToken = true;
-    config.TokenValidationParameters = new TokenValidationParameters{
+    config.TokenValidationParameters = new TokenValidationParameters
+    {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(Byteskey),
-        ValidateIssuer= false,
-        ValidateAudience = false
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
 
