@@ -15,7 +15,6 @@ namespace MAVE.Controllers
         }
 
         [HttpGet]
-
         [Authorize]
         [Route("HabitQuestions/{id}")]
         public async Task<IActionResult> HabitQuestions(int? id){
@@ -31,20 +30,24 @@ namespace MAVE.Controllers
              }
          }
         [HttpGet]
-        //[Authorize]
+        [Authorize]
         [Route("GetInitialEvaluation/{id}")]
         public async Task<IActionResult> GetInitialEvaluation(int id){
             try{
                 var questions = await _serv.GetInitialQuestion(id);
-                if(questions == null){
+                if(questions == null)
+                {
                     return BadRequest("El usuario ya hizo la evaluación inicial");
-                }else{
+                }
+                else
+                {
                     return Ok(questions);
                 }
-            }catch(Exception e){
+            }
+            catch(Exception e)
+            {
                 return BadRequest("Ha ocurrido un error: " + e.Message);
             }
-            
         }
 
         [HttpPost]
@@ -53,18 +56,26 @@ namespace MAVE.Controllers
         public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer){
             try
             {
-                if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
+                if(answer.Option != null)
                 {
-                    return BadRequest("Los datos no se guardaron");
-                }
-                else if(await _serv.SetIntialQuestion(answer.Option, answer.Id) == 0)
-                {
-                    return Ok("Los datos se guardaron exitosamente");
+                    if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
+                    {
+                        return BadRequest("Los datos no se guardaron");
+                    }
+                    else if(await _serv.SetIntialQuestion(answer.Option, answer.Id) == 0)
+                    {
+                        return Ok("Los datos se guardaron exitosamente");
+                    }
+                    else
+                    {
+                        return BadRequest("Algo salió mal durante el análisis de la evaluación"); 
+                    }
                 }
                 else
                 {
-                    return BadRequest("Algo salió mal durante el análisis de la evaluación"); 
+                    return BadRequest("El listado de opciones esta vacío");
                 }
+                
             }
             catch (Exception ex)
             {
@@ -74,7 +85,5 @@ namespace MAVE.Controllers
             
             
         }
-
-
     }
 }
