@@ -61,7 +61,7 @@ namespace MAVE.Services
         public async Task<bool> CreateUser(UserSigInDTO user)
         {
             //verify entry not null
-            if(_repo.GetUserByMail(user.Email) == null)
+            if(await _repo.GetUserByMail(user.Email) == null)
             {
                 //modify user for export to database
                 var userU = new User{
@@ -82,11 +82,11 @@ namespace MAVE.Services
                     Contain = "Welcome to Mave" 
                 }; 
                 _mail.SendEmail(emailRequest);
-                return true;
+                return true;   
             }
             else
             {
-                return false;   
+                return false;
             }
         }
 

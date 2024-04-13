@@ -52,17 +52,17 @@ namespace MAVE.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route ("SetInitialEvaluation")]
-        public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer){
+        [Route ("SetInitialEvaluation/{id}")]
+        public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer, int? id){
             try
             {
                 if(answer.Option != null)
                 {
-                    if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
+                    if (await _serv.SetIntialQuestion(answer.Option, id) == 1)
                     {
                         return BadRequest("Los datos no se guardaron");
                     }
-                    else if(await _serv.SetIntialQuestion(answer.Option, answer.Id) == 0)
+                    else if(await _serv.SetIntialQuestion(answer.Option, id) == 0)
                     {
                         return Ok("Los datos se guardaron exitosamente");
                     }
