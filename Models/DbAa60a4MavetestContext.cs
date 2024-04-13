@@ -6,6 +6,7 @@ namespace MAVE.Models;
 
 public partial class DbAa60a4MavetestContext : DbContext
 {
+    
     public DbAa60a4MavetestContext()
     {
     }
@@ -16,7 +17,6 @@ public partial class DbAa60a4MavetestContext : DbContext
     }
 
     public virtual DbSet<Article> Articles { get; set; }
-
     public virtual DbSet<Auditory> Auditories { get; set; }
 
     public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
