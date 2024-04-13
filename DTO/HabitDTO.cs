@@ -2,6 +2,6 @@ namespace MAVE.DTO
 {
     public class HabitDTO
     {
-        public List<int>? Score { get; set; }
+        public List<short>? Score { get; set; }
     }
 }
