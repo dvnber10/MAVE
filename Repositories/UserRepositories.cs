@@ -35,7 +35,6 @@ namespace MAVE.Repositories
         public async Task<User?> GetUserByMail(string mail){
             var userC =await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);
             return userC;
-            
         }
     }
 }
