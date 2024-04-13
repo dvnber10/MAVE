@@ -28,7 +28,7 @@ namespace MAVE.Repositories
                 {
                     Question question = new Question
                     {
-                        Score = h,
+                        ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
                         QuestionId = catQuestions[i].CatQuestionId,
                         UserId = (int)id
@@ -55,7 +55,6 @@ namespace MAVE.Repositories
             try
             {
                 DateTime date = DateTime.Now;
-                short queId = 14;
                 String a;
                 var user = await _context.Users.FindAsync(Id);
                 if (user == null)
@@ -66,9 +65,10 @@ namespace MAVE.Repositories
                 {
                     user.EvaluationId = result;
                 }
-
                 _context.Update(user);
                 _context.SaveChanges();
+                var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToArrayAsync();
+                int queId = 0;
                 foreach (char c in answers)
                 {
                     a = c + "";
@@ -79,7 +79,7 @@ namespace MAVE.Repositories
 
                     Question question = new Question
                     {
-                        CatQuestionId = queId,
+                        CatQuestionId = catQ[queId].CatQuestionId,
                         OptionId = option.OptionId,
                         Date = DateOnly.FromDateTime(date),
                         UserId = Convert.ToInt32(Id)
