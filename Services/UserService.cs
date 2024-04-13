@@ -2,8 +2,6 @@
 using MAVE.Models;
 using MAVE.Repositories;
 using MAVE.Utilities;
-using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Mvc;
 
 namespace MAVE.Services
 {
