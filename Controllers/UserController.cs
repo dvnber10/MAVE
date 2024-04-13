@@ -73,7 +73,7 @@ namespace MAVE.Controllers
                     Message = "Bienvenido al sistema"
                 };
                 var result = JsonSerializer.Serialize(userToken);
-                return Ok(Created(token,true));
+                return StatusCode(StatusCodes.Status200OK , result);
             }
             else
             {

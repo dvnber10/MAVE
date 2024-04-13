@@ -21,13 +21,13 @@ namespace MAVE.Services
         public async Task<List<CatQuestion>?> GetInitialQuestion(int id){
             try{
                 var user = await _Urepo.GetUserByID(id);
-                if (user.EvaluationId != 1)
+                if (user.EvaluationId == 1)
                 {
-                    return null;
+                    return await _repo.GetInitialQuestion();
                 }
                 else
                 {
-                    return await _repo.GetInitialQuestion();
+                    return null;
                 }
 
             }catch(Exception){

@@ -36,7 +36,9 @@ namespace MAVE.Services
         }
 
         public async Task<User> GetUserByMail(string email){
+#pragma warning disable CS8603 // Possible null reference return.
             return await _repo.GetUserByMail(email);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         //Update users method
@@ -61,10 +63,6 @@ namespace MAVE.Services
             //verify entry not null
             if(_repo.GetUserByMail(user.Email) == null)
             {
-                return false;
-            }
-            else
-            {
                 //modify user for export to database
                 var userU = new User{
                     Email = user.Email,
@@ -86,13 +84,19 @@ namespace MAVE.Services
                 _mail.SendEmail(emailRequest);
                 return true;
             }
+            else
+            {
+                return false;   
+            }
         }
 
         //Login Method
         public async Task<int> LogIn(string user, string pass)
         {
             var UserAct = await _repo.GetUserByMail(user);
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
             var password = UserAct.Password;
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
             if (UserAct == null)
             {
                 return 0;
@@ -115,7 +119,7 @@ namespace MAVE.Services
             else
             {
                 var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
-                string url = "https://bvdnxbgz-5173.use2.devtunnels.ms/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
+                string url = "https://v00lqp9l-5173.use2.devtunnels.ms/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,
                     Affair = "Recovery Password Mave",
