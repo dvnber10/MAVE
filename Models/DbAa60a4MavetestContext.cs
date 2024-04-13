@@ -17,6 +17,8 @@ public partial class DbAa60a4MavetestContext : DbContext
 
     public virtual DbSet<Article> Articles { get; set; }
 
+    public virtual DbSet<Auditory> Auditories { get; set; }
+
     public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
 
     public virtual DbSet<CatEvaluation> CatEvaluations { get; set; }
@@ -26,6 +28,8 @@ public partial class DbAa60a4MavetestContext : DbContext
     public virtual DbSet<CatQuestion> CatQuestions { get; set; }
 
     public virtual DbSet<CatRole> CatRoles { get; set; }
+
+    public virtual DbSet<CatScore> CatScores { get; set; }
 
     public virtual DbSet<CatStatus> CatStatuses { get; set; }
 
@@ -60,19 +64,19 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasConstraintName("FK_ARTICLE_USER");
         });
 
-        //modelBuilder.Entity<Auditory>(entity =>
-        //{
-        //    entity.HasKey(e => e.AuditId);
-//
-        //    entity.ToTable("AUDITORY");
-//
-        //    entity.Property(e => e.Action)
-        //        .HasMaxLength(30)
-        //        .IsUnicode(false);
-        //    entity.Property(e => e.Date).HasColumnType("datetime");
-        //    entity.Property(e => e.NewValue).HasMaxLength(255);
-        //    entity.Property(e => e.OldValue).HasMaxLength(255);
-        //});
+        modelBuilder.Entity<Auditory>(entity =>
+        {
+            entity.HasKey(e => e.AuditId);
+
+            entity.ToTable("AUDITORY");
+
+            entity.Property(e => e.Action)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.NewValue).HasMaxLength(255);
+            entity.Property(e => e.OldValue).HasMaxLength(255);
+        });
 
         modelBuilder.Entity<CatArticleType>(entity =>
         {
@@ -134,6 +138,18 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .IsUnicode(false);
         });
 
+        modelBuilder.Entity<CatScore>(entity =>
+        {
+            entity.HasKey(e => e.ScoreId);
+
+            entity.ToTable("CAT_SCORE");
+
+            entity.Property(e => e.ScoreId).ValueGeneratedNever();
+            entity.Property(e => e.ScoreType)
+                .HasMaxLength(30)
+                .IsUnicode(false);
+        });
+
         modelBuilder.Entity<CatStatus>(entity =>
         {
             entity.HasKey(e => e.StatusId);
@@ -173,6 +189,10 @@ public partial class DbAa60a4MavetestContext : DbContext
             entity.HasOne(d => d.Option).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.OptionId)
                 .HasConstraintName("FK_QUESTION_CAT_OPTION");
+
+            entity.HasOne(d => d.Score).WithMany(p => p.Questions)
+                .HasForeignKey(d => d.ScoreId)
+                .HasConstraintName("FK_QUESTION_CAT_SCORE");
 
             entity.HasOne(d => d.User).WithMany(p => p.Questions)
                 .HasForeignKey(d => d.UserId)
