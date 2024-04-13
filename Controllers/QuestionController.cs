@@ -16,19 +16,46 @@ namespace MAVE.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("HabitQuestions/{id}")]
-        public async Task<IActionResult> HabitQuestions(int? id){
+        [Route("GetHabitQuestions/{id}")]
+        public async Task<IActionResult> GetHabitQuestions(int? id){
             try
             {
                 var questions = await _serv.GetHabitQuestion(id);
                 return Ok(questions); 
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
                 throw;
              }
-         }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("SetHabitScore/{id}")]
+        public async Task<IActionResult> SetHabitScore(int? id, HabitDTO habit)
+        {
+            try
+            {
+                if(await _serv.SetHabitQuestion(id,habit) == 0)
+                {
+                    return Ok("Se guardaron los datos exitósamente");
+                }
+                else if(await _serv.SetHabitQuestion(id,habit) == 1)
+                {
+                    return BadRequest("Hubo un problema con la base de datos");
+                }
+                else
+                {
+                    return BadRequest("Algo salió mal");
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Ocurrió un error: "+ e.Message);
+            }
+        }
+
         [HttpGet]
         [Authorize]
         [Route("GetInitialEvaluation/{id}")]

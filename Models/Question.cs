@@ -5,7 +5,7 @@ namespace MAVE.Models;
 
 public partial class Question
 {
-    public int? Score { get; set; }
+    public short? ScoreId { get; set; }
 
     public int QuestionId { get; set; }
 
@@ -20,6 +20,8 @@ public partial class Question
     public virtual CatQuestion CatQuestion { get; set; } = null!;
 
     public virtual CatOption? Option { get; set; }
+
+    public virtual CatScore? Score { get; set; }
 
     public virtual User User { get; set; } = null!;
 }
