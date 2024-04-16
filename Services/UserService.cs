@@ -86,11 +86,6 @@ namespace MAVE.Services
             {
                 return false;
             }
-            else
-            {
-                //modify user for export to database
-                return false;                
-            }
         }
 
         //Login Method
