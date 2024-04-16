@@ -1,4 +1,5 @@
 using MAVE.DTO;
+using MAVE.Models;
 using MAVE.Repositories;
 
 namespace MAVE.Services
@@ -48,6 +49,19 @@ namespace MAVE.Services
             {
                 return 2;
             }   
+        }
+
+        public async Task<MoodGraphicDTO?> GetScores(int? id)
+        {
+            try
+            {
+                MoodGraphicDTO? mood = await _repo.GetScores(id); 
+                return mood;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
         }
     }
 }

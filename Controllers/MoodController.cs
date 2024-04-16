@@ -9,7 +9,7 @@ namespace MAVE.Controllers
     [Route("api/[controller]")]
     public class MoodController: Controller
     {
-        private readonly Services.MoodService _serv;
+        private readonly MoodService _serv;
 
         public MoodController(MoodService serv)
         {
@@ -58,6 +58,29 @@ namespace MAVE.Controllers
             catch(Exception e)
             {
                 return BadRequest("Algo falló" + e.Message);
+            }
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("GetMoodGraphic/{id}")]
+        public async Task<IActionResult> GetMoodGraphic(int? id)
+        {
+            try
+            {
+                MoodGraphicDTO? mood = await _serv.GetScores(id);
+                if (mood == null)
+                {
+                    return BadRequest("No se encontraron datos de este usuario");
+                }
+                else
+                {
+                    return Ok(mood);
+                }
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Ocurrió un error: " + e);
             }
         }
     }
