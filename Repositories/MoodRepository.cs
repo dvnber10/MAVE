@@ -27,15 +27,16 @@ namespace MAVE.Repositories
                         Date = DateTime.Now,
                         UserId = user.UserId
                     };
-                    _context.Moods.Add(md);
-                    _context.SaveChanges();
+                    await _context.Moods.AddAsync(md);
+                    await _context.SaveChangesAsync();
                     return 1;
                 }
                 else
                 {
                     return 0;
                 }
-            }catch (Exception)
+            }
+            catch (Exception)
             {
                 return 0;
             }
@@ -45,23 +46,23 @@ namespace MAVE.Repositories
             try
             {
                 DateTime day = DateTime.Now;
-                var user =await _context.Users.FindAsync(id);
+                var user = await _context.Users.FindAsync(id);
                 if(user == null)
                 {
                     return 1;
                 }
                 else 
                 {
-                    var mood = _context.Moods.Where(m => m.UserId == user.UserId).FirstOrDefault();
+                    var mood = await _context.Moods.Where(m => m.UserId == user.UserId).FirstOrDefaultAsync();
                     if(mood == null)
                     {
-                        return 1;
+                        return 0;
                     }
                     else 
                     {
                         if(mood.Date.Day == day.Day)
                         {
-                            return 1;
+                            return 2;
                         }
                         else
                         {
@@ -81,16 +82,11 @@ namespace MAVE.Repositories
             try
             {
                 MoodGraphicDTO mood = new MoodGraphicDTO(); 
-                var score1 = await _context.Moods.Where(m => m.MoodScore == 1 && m.UserId == id).CountAsync(); 
-                var score2 = await _context.Moods.Where(m => m.MoodScore == 2 && m.UserId == id).CountAsync();
-                var score3 = await _context.Moods.Where(m => m.MoodScore == 3 && m.UserId == id).CountAsync();
-                var score4 = await _context.Moods.Where(m => m.MoodScore == 4 && m.UserId == id).CountAsync();
-                var score5 = await _context.Moods.Where(m => m.MoodScore == 5 && m.UserId == id).CountAsync();
-                mood.Score1 = score1;
-                mood.Score2 = score2;
-                mood.Score3 = score3;
-                mood.Score4 = score4;
-                mood.Score5 = score5;
+                mood.Score1 = await _context.Moods.Where(m => m.MoodScore == 1 && m.UserId == id).CountAsync(); 
+                mood.Score2 = await _context.Moods.Where(m => m.MoodScore == 2 && m.UserId == id).CountAsync();
+                mood.Score3 = await _context.Moods.Where(m => m.MoodScore == 3 && m.UserId == id).CountAsync();
+                mood.Score4 = await _context.Moods.Where(m => m.MoodScore == 4 && m.UserId == id).CountAsync();
+                mood.Score5 = await _context.Moods.Where(m => m.MoodScore == 5 && m.UserId == id).CountAsync();
                 return mood;
             }
             catch (Exception)

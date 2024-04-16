@@ -20,11 +20,12 @@ namespace MAVE.Controllers
         [Authorize]
         [Route("SetMood/{id}")]
         public async Task<IActionResult> SetMood(MoodDTO mood, int? id){
-            if(await _serv.SetMood(mood, id) == 0)
+            int res = await _serv.SetMood(mood, id);
+            if(res == 0)
             {
                 return BadRequest("No se envio ningún dato");
             }
-            else if (await _serv.SetMood(mood, id) == 2)
+            else if (res == 2)
             {
                 return BadRequest("Hubo algún problema en la base de datos");
             }
