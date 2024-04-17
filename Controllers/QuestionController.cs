@@ -98,7 +98,7 @@ namespace MAVE.Controllers
                     int res = await _serv.SetIntialQuestion(answer.Option, id);
                     if (answer.Option != null)
                     {
-                        if (await _serv.SetIntialQuestion(answer.Option, id) == 1)
+                        if (res == 1)
                         {
                             return BadRequest("Los datos no se guardaron");
                         }
