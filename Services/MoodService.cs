@@ -6,7 +6,7 @@ namespace MAVE.Services
 {
     public class MoodService
     {
-        private readonly Repositories.MoodRepository _repo;
+        private readonly MoodRepository _repo;
 
         public MoodService(MoodRepository repo)
         {
@@ -49,6 +49,19 @@ namespace MAVE.Services
             {
                 return 2;
             }   
+        }
+
+        public async Task<MoodGraphicDTO?> GetMoodGraphic(int? id)
+        {
+            try
+            {
+                MoodGraphicDTO? mood = await _repo.GetMoodGraphic(id);
+                return mood;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
         }
     }
 }
