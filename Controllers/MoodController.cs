@@ -20,6 +20,7 @@ namespace MAVE.Controllers
         [Authorize]
         [Route("SetMood/{id}")]
         public async Task<IActionResult> SetMood(MoodDTO mood, int? id){
+            if (mood.Score <= 0 || mood.Score > 5) return BadRequest("Puntaje inválido");
             int res = await _serv.SetMood(mood, id);
             if(res == 0)
             {
