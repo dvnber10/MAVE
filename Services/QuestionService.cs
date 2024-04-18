@@ -59,9 +59,10 @@ namespace MAVE.Services
             try
             {
                 _eva.SetAnswers(answer);
-                if(_eva.Score() != 0)
+                short score = _eva.Score();
+                if(score != 0)
                 {
-                    if (await _repo.SetInitialQuestion(answer, _eva.Score(), Id) == 1)
+                    if (await _repo.SetInitialQuestion(answer, score, Id) == 1)
                     {
                         return 1;
                     }
