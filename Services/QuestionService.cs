@@ -1,4 +1,3 @@
-using System.Web.Mvc;
 using MAVE.DTO;
 using MAVE.Models;
 using MAVE.Repositories;
@@ -23,7 +22,7 @@ namespace MAVE.Services
         {
             try
             {
-                if(await _repo.SetHabitQuestion(id,habit) == 0)
+             if(await _repo.SetHabitQuestion(id,habit) == 0)
                 {
                     return 0;
                 }

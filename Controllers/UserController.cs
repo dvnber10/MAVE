@@ -64,11 +64,10 @@ namespace MAVE.Controllers
             }
             if(await _serv.CreateUser(user))
             {
-                var userA = _serv.GetUserByMail(user.Email);
-                var token = _token.GenerarToken(user.Email,Convert.ToString(userA.Id));
-                var userAct = _serv.GetUserByMail(user.Email);
+                var userA = await _serv.GetUserByMail(user.Email);
+                var token = _token.GenerarToken(user.Email,Convert.ToString(userA.UserId));
                 var userToken = new JsonFile{
-                    Id = Convert.ToString(userAct.Id),
+                    Id = Convert.ToString(userA.UserId),
                     Token = token,
                     Message = "Bienvenido al sistema"
                 };
@@ -96,10 +95,10 @@ namespace MAVE.Controllers
             }
             else if (res == 1)
             {
-                var userAct = _serv.GetUserByMail(rest.Email);
-                var token = _token.GenerarToken(rest.Email,Convert.ToString(userAct.Id));
+                var userAct =await _serv.GetUserByMail(rest.Email);
+                var token = _token.GenerarToken(rest.Email,Convert.ToString(userAct.UserId));
                 var userToken = new JsonFile{
-                    Id = Convert.ToString(userAct.Id),
+                    Id = Convert.ToString(userAct.UserId),
                     Token = token,
                     Message = "Bienvenido al sistema",
                     Status = 5000
