@@ -6,15 +6,13 @@ namespace MAVE.Utilities
     public class EvaluationUtility
     {
         private List<char>? Answers;
-        public List<char> GetAnswers() 
+        public List<char>? GetAnswers() 
         {
-#pragma warning disable CS8603 // Possible null reference return.
             return Answers;
-#pragma warning restore CS8603 // Possible null reference return.
         }
         public void SetAnswers(List<char> answers)
         {
-            this.Answers = answers;
+            Answers = answers;
         }
 
         public short Score()
@@ -23,8 +21,9 @@ namespace MAVE.Utilities
             {
                 //Contadores para saber la cantidad de veces que el usuario eligió un perfil 
                 int dScore = 0, iScore = 0, sScore = 0, cScore = 0, i = 1;
-                List<char> results = GetAnswers();
-                //Recorre todas las respuestas y va asignando los valores de cada pregunta a su respectivo contador
+                List<char>? results = GetAnswers();
+                if (results != null){
+                    //Recorre todas las respuestas y va asignando los valores de cada pregunta a su respectivo contador
                 foreach (char answer in results)
                 {
                     switch (i)
@@ -724,6 +723,12 @@ namespace MAVE.Utilities
                 if (sScore == may) return 3;
                 if (cScore == may) return 4;
                 else return 0;
+                }
+                else
+                {
+                    return 0;
+                }
+                
             }catch(Exception ) 
             { 
                 return -1; 

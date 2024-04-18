@@ -59,7 +59,7 @@ namespace MAVE.Services
             try
             {
                 _eva.SetAnswers(answer);
-                if(_eva.Score() == -1)
+                if(_eva.Score() != 0)
                 {
                     if (await _repo.SetInitialQuestion(answer, _eva.Score(), Id) == 1)
                     {
