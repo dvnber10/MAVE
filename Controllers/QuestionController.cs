@@ -37,11 +37,12 @@ namespace MAVE.Controllers
         {
             try
             {
-                if(await _serv.SetHabitQuestion(id,habit) == 0)
+                int res = await _serv.SetHabitQuestion(id, habit);
+                if(res == 0)
                 {
                     return Ok("Se guardaron los datos exitósamente");
                 }
-                else if(await _serv.SetHabitQuestion(id,habit) == 1)
+                else if(res == 1)
                 {
                     return BadRequest("Hubo un problema con la base de datos");
                 }
