@@ -1,6 +1,7 @@
 using MAVE.DTO;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace MAVE.Repositories
 {
@@ -65,15 +66,14 @@ namespace MAVE.Repositories
                 {
                     user.EvaluationId = result;
                 }
-                _context.Update(user);
-                _context.SaveChanges();
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
                 var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToArrayAsync();
                 int queId = 0;
                 foreach (char c in answers)
                 {
                     a = c + "";
-
-                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
+                    var option = _context.CatOptions.Where(e => e.CatQuestionId == catQ[queId].CatQuestionId
                     && e.Abcd == a).FirstOrDefault();
                     if(option == null || Id == null) return 1;
 
@@ -84,8 +84,8 @@ namespace MAVE.Repositories
                         Date = DateOnly.FromDateTime(date),
                         UserId = Convert.ToInt32(Id)
                     };
-                    _context.Update(question);
-                    _context.SaveChanges();
+                    _context.Questions.Update(question);
+                    await _context.SaveChangesAsync();
                     queId++;
                 }
                 return 0;
@@ -94,6 +94,38 @@ namespace MAVE.Repositories
             catch(Exception)
             {
                 return 1;
+            }
+        }
+
+        public async Task<InitialGraphicDTO?> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO iniVals = new InitialGraphicDTO();
+                int d = 0, i = 0, s = 0, c = 0;
+                var question = await _context.Questions.Where(q => q.UserId == id).ToListAsync();
+                var option = question.Join(
+                _context.CatOptions, q => q.OptionId, co => co.OptionId, (q, co) => new
+                {
+                    Value = co.Value                        
+                }).ToList(); 
+                if (option == null) return null;
+                foreach (var item in option)
+                {
+                    if (item.Value.Equals("D")) d++;
+                    if (item.Value.Equals("I")) i++;
+                    if (item.Value.Equals("S")) s++;
+                    if (item.Value.Equals("C")) c++;                    
+                }
+                iniVals.D = d;
+                iniVals.I = i;
+                iniVals.S = s;
+                iniVals.C = c; 
+                return iniVals;
+            }
+            catch(Exception)
+            {
+                return null;
             }
         }
     }

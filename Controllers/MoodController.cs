@@ -20,13 +20,15 @@ namespace MAVE.Controllers
         [Authorize]
         [Route("SetMood/{id}")]
         public async Task<IActionResult> SetMood(MoodDTO mood, int? id){
-            if(await _serv.SetMood(mood, id) == 0)
+            if (mood.Score <= 0 || mood.Score > 5) return BadRequest("Puntaje inválido");
+            int res = await _serv.SetMood(mood, id);
+            if(res == 0)
             {
                 return BadRequest("No se envio ningún dato");
             }
-            else if (await _serv.SetMood(mood, id) == 2)
+            else if (res == 2)
             {
-                return BadRequest("Hubo algún problema en la base de datos");
+                return BadRequest("Ya elegiste tu estado de ánimo hoy");
             }
             else
             {
@@ -60,5 +62,23 @@ namespace MAVE.Controllers
                 return BadRequest("Algo falló" + e.Message);
             }
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("GetMoodGraphic/{id}")]
+        public async Task<IActionResult> GetMoodGraphic(int? id)
+        {
+            try
+            {
+                MoodGraphicDTO? mood = await _serv.GetMoodGraphic(id);
+                if(mood == null) return BadRequest("No se encontró información de este usuario");
+                else return Ok(mood);
+            }
+            catch(Exception e)
+            {
+                return BadRequest("Algo salió mal: "+e);            
+            }
+        }
+
     }
 }

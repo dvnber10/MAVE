@@ -10,24 +10,26 @@ namespace MAVE.Controllers
     public class QuestionController : ControllerBase
     {
         private readonly QuestionService _serv;
-        public QuestionController(QuestionService serv){
+        public QuestionController(QuestionService serv)
+        {
             _serv = serv;
         }
 
         [HttpGet]
         [Authorize]
         [Route("GetHabitQuestions/{id}")]
-        public async Task<IActionResult> GetHabitQuestions(int? id){
+        public async Task<IActionResult> GetHabitQuestions(int? id)
+        {
             try
             {
                 var questions = await _serv.GetHabitQuestion(id);
-                return Ok(questions); 
+                return Ok(questions);
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
                 throw;
-             }
+            }
         }
 
         [HttpPost]
@@ -37,11 +39,12 @@ namespace MAVE.Controllers
         {
             try
             {
-                if(await _serv.SetHabitQuestion(id,habit) == 0)
+                int res = await _serv.SetHabitQuestion(id, habit);
+                if (res == 0)
                 {
                     return Ok("Se guardaron los datos exitósamente");
                 }
-                else if(await _serv.SetHabitQuestion(id,habit) == 1)
+                else if (res == 1)
                 {
                     return BadRequest("Hubo un problema con la base de datos");
                 }
@@ -52,17 +55,19 @@ namespace MAVE.Controllers
             }
             catch (Exception e)
             {
-                return BadRequest("Ocurrió un error: "+ e.Message);
+                return BadRequest("Ocurrió un error: " + e.Message);
             }
         }
 
         [HttpGet]
         [Authorize]
         [Route("GetInitialEvaluation/{id}")]
-        public async Task<IActionResult> GetInitialEvaluation(int id){
-            try{
+        public async Task<IActionResult> GetInitialEvaluation(int id)
+        {
+            try
+            {
                 var questions = await _serv.GetInitialQuestion(id);
-                if(questions == null)
+                if (questions == null)
                 {
                     return BadRequest("El usuario ya hizo la evaluación inicial");
                 }
@@ -71,7 +76,7 @@ namespace MAVE.Controllers
                     return Ok(questions);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return BadRequest("Ha ocurrido un error: " + e.Message);
             }
@@ -79,38 +84,74 @@ namespace MAVE.Controllers
 
         [HttpPost]
         [Authorize]
-        [Route ("SetInitialEvaluation")]
-        public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer){
+        [Route("SetInitialEvaluation/{id}")]
+        public async Task<IActionResult> SetInitialQuestions(EvaluationDTO answer, int? id)
+        {
             try
             {
-                if(answer.Option != null)
+                if (answer.Option == null)
                 {
-                    if (await _serv.SetIntialQuestion(answer.Option, answer.Id) == 1)
+                    return BadRequest("No hay información para guardar");
+                } 
+                else
+                {
+                    int res = await _serv.SetIntialQuestion(answer.Option, id);
+                    if (answer.Option != null)
                     {
-                        return BadRequest("Los datos no se guardaron");
-                    }
-                    else if(await _serv.SetIntialQuestion(answer.Option, answer.Id) == 0)
-                    {
-                        return Ok("Los datos se guardaron exitosamente");
+                        if (res == 1)
+                        {
+                            return BadRequest("Los datos no se guardaron");
+                        }
+                        else if (res == 0)
+                        {
+                            return Ok("Los datos se guardaron exitosamente");
+                        }
+                        else
+                        {
+                            return BadRequest("Algo salió mal durante el análisis de la evaluación");
+                        }
                     }
                     else
                     {
-                        return BadRequest("Algo salió mal durante el análisis de la evaluación"); 
+                        return BadRequest("El listado de opciones esta vacío");
                     }
+
                 }
-                else
-                {
-                    return BadRequest("El listado de opciones esta vacío");
-                }
-                
+
             }
             catch (Exception ex)
             {
-                return BadRequest("Ocurrio un error: "+ex.Message);
+                return BadRequest("Ocurrio un error: " + ex.Message);
 
             }
-            
-            
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("GetInitialGraphic/{id}")]
+        public async Task<IActionResult> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO? iniVals = new InitialGraphicDTO();
+                if (id == null)
+                {
+                    return NotFound("El id esta vacío");
+                }
+                iniVals = await _serv.GetInitialGraphic(id);
+                if (iniVals == null)
+                {
+                    return NotFound("No se encontraron datos");
+                }
+                else
+                {
+                    return Ok(iniVals);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Algo salió mal: "+ex);
+            }
+        } 
     }
 }

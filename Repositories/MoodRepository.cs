@@ -1,5 +1,6 @@
 using MAVE.DTO;
 using MAVE.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MAVE.Repositories
 {
@@ -19,7 +20,8 @@ namespace MAVE.Repositories
             try
             {
                 var user = await _context.Users.FindAsync(id);
-                if(user != null){
+                if (user != null)
+                {
                     Mood md = new Mood
                     {
                         MoodScore = mood.Score,
@@ -34,44 +36,63 @@ namespace MAVE.Repositories
                 {
                     return 0;
                 }
-            }catch (Exception)
+            }
+            catch (Exception)
             {
                 return 0;
             }
         }
-        
-        public async Task<int> GetMood(int? id){
+
+        public async Task<int> GetMood(int? id)
+        {
             try
             {
                 DateTime day = DateTime.Now;
-                var user =await _context.Users.FindAsync(id);
-                if(user == null)
+                bool res = true;
+                var user = await _context.Users.FindAsync(id);
+                if (user == null)
                 {
                     return 1;
                 }
-                else 
+                else
                 {
-                    var mood = _context.Moods.Where(m => m.UserId == user.UserId).FirstOrDefault();
-                    if(mood == null)
+                    var mood = await _context.Moods.Where(m => m.UserId == user.UserId).ToListAsync();
+                    if (mood == null)
                     {
-                        return 1;
+                        return 0;
                     }
-                    else 
+                    foreach(var item in mood)
                     {
-                        if(mood.Date.Day == day.Day)
+                        if (item.Date.Day == day.Day)
                         {
-                            return 1;
-                        }
-                        else
-                        {
-                            return 0;
+                            res = false;
                         }
                     }
+                    if (res) return 0;
+                    else return 1;
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return 1;
+            }
+        }
+
+        public async Task<MoodGraphicDTO?> GetMoodGraphic(int? id)
+        {
+            try
+            {
+                MoodGraphicDTO? mood = new MoodGraphicDTO();
+                mood.Score1 = await _context.Moods.Where(m => m.MoodScore == 1 && m.UserId == id).CountAsync();
+                mood.Score2 = await _context.Moods.Where(m => m.MoodScore == 2 && m.UserId == id).CountAsync();
+                mood.Score3 = await _context.Moods.Where(m => m.MoodScore == 3 && m.UserId == id).CountAsync();
+                mood.Score4 = await _context.Moods.Where(m => m.MoodScore == 4 && m.UserId == id).CountAsync();
+                mood.Score5 = await _context.Moods.Where(m => m.MoodScore == 5 && m.UserId == id).CountAsync();
+                return mood;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

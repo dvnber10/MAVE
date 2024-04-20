@@ -1,4 +1,3 @@
-using System.Web.Mvc;
 using MAVE.DTO;
 using MAVE.Models;
 using MAVE.Repositories;
@@ -23,7 +22,7 @@ namespace MAVE.Services
         {
             try
             {
-                if(await _repo.SetHabitQuestion(id,habit) == 0)
+             if(await _repo.SetHabitQuestion(id,habit) == 0)
                 {
                     return 0;
                 }
@@ -60,9 +59,10 @@ namespace MAVE.Services
             try
             {
                 _eva.SetAnswers(answer);
-                if(_eva.Score() == -1)
+                short score = _eva.Score();
+                if(score != 0)
                 {
-                    if (await _repo.SetInitialQuestion(answer, _eva.Score(), Id) == 1)
+                    if (await _repo.SetInitialQuestion(answer, score, Id) == 1)
                     {
                         return 1;
                     }
@@ -79,6 +79,20 @@ namespace MAVE.Services
             catch (Exception)
             {
                 return 2;
+            }
+        }
+
+        public async Task<InitialGraphicDTO?> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO? iniVals = new InitialGraphicDTO();
+                iniVals = await _repo.GetInitialGraphic(id);
+                return iniVals;
+            }
+            catch(Exception)
+            {
+                return null;
             }
         }
     }
