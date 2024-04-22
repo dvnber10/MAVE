@@ -33,7 +33,7 @@ namespace MAVE.Repositories
                         QuestionId = catQuestions[i].CatQuestionId,
                         UserId = (int)id
                     };
-                    _context.Update(question);
+                    _context.Questions.Update(question);
                     _context.SaveChanges();
                     i++;
                 }
@@ -65,14 +65,15 @@ namespace MAVE.Repositories
                 {
                     user.EvaluationId = result;
                 }
-                _context.Users.Update(user);
-                await _context.SaveChangesAsync();
+                _context.Update(user);
+                _context.SaveChanges();
                 var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToArrayAsync();
                 int queId = 0;
                 foreach (char c in answers)
                 {
                     a = c + "";
-                    var option = _context.CatOptions.Where(e => e.CatQuestionId == catQ[queId].CatQuestionId
+
+                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
                     && e.Abcd == a).FirstOrDefault();
                     if(option == null || Id == null) return 1;
 
@@ -83,8 +84,8 @@ namespace MAVE.Repositories
                         Date = DateOnly.FromDateTime(date),
                         UserId = Convert.ToInt32(Id)
                     };
-                    _context.Questions.Update(question);
-                    await _context.SaveChangesAsync();
+                    _context.Update(question);
+                    _context.SaveChanges();
                     queId++;
                 }
                 return 0;

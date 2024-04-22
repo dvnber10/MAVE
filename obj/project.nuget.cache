@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "2XszsTQVOJsHeroUN1v0/hOjkWXAOMntwCOgvH+7sluIvMGRHhmNf7nikaycGlwWXGXL3o+4t/3K0FKEZYZEag==",
+  "dgSpecHash": "bKeZqQQ7Er06hVheaqH5p0FoSpKiVYasXttXD4l1+6fEnVnEsbK85Md75hwcTfmaJVaEFQzJv/JLiUHEX72ucg==",
   "success": true,
   "projectFilePath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj",
   "expectedPackageFiles": [
@@ -104,15 +104,9 @@
     "/home/dvn/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "/home/dvn/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512",
     "/home/dvn/.nuget/packages/zstdsharp.port/0.7.3/zstdsharp.port.0.7.3.nupkg.sha512",
-    "/home/dvn/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.3/microsoft.aspnetcore.app.ref.8.0.3.nupkg.sha512"
+    "/home/dvn/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.4/microsoft.aspnetcore.app.ref.8.0.4.nupkg.sha512"
   ],
   "logs": [
-    {
-      "code": "Undefined",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Problem reading the cache file /home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/obj/project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
-    },
     {
       "code": "NU1701",
       "level": "Warning",
