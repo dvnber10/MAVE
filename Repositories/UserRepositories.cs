@@ -10,6 +10,20 @@ namespace MAVE.Repositories
         public UserRepositories(DbAa60a4MavetestContext context){
             _context = context;
         }
+        public async Task<int> GetRoleById(int? id)
+        {
+            try
+            {
+                var user = await _context.Users.Where(r => r.UserId == id).FirstOrDefaultAsync();
+                if (user == null) return 0;
+                int role = user.RoleId;
+                return role;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
         public async Task UpdateUser (User user){
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -33,7 +47,7 @@ namespace MAVE.Repositories
             #pragma warning restore CS8603 // Possible null reference return.
         }
         public async Task<User?> GetUserByMail(string mail){
-            var userC =await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);
+            var userC = await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);
             return userC;
         }
     }

@@ -17,8 +17,6 @@ public partial class User
 
     public short RoleId { get; set; }
 
-    public string? Name { get; set; }
-
     public short EvaluationId { get; set; }
 
     public short StatusId { get; set; }
