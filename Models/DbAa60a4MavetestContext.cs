@@ -6,7 +6,6 @@ namespace MAVE.Models;
 
 public partial class DbAa60a4MavetestContext : DbContext
 {
-    
     public DbAa60a4MavetestContext()
     {
     }
@@ -17,6 +16,7 @@ public partial class DbAa60a4MavetestContext : DbContext
     }
 
     public virtual DbSet<Article> Articles { get; set; }
+
     public virtual DbSet<Auditory> Auditories { get; set; }
 
     public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
@@ -74,8 +74,12 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasMaxLength(30)
                 .IsUnicode(false);
             entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.NewValue).HasMaxLength(255);
-            entity.Property(e => e.OldValue).HasMaxLength(255);
+            entity.Property(e => e.NewValue)
+                .HasMaxLength(255)
+                .IsUnicode(false);
+            entity.Property(e => e.OldValue)
+                .HasMaxLength(255)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<CatArticleType>(entity =>
@@ -204,10 +208,14 @@ public partial class DbAa60a4MavetestContext : DbContext
         {
             entity.HasKey(e => e.UserId).HasName("PK_User");
 
-            entity.ToTable("USER");
+            entity.ToTable("USER", tb =>
+                {
+                    tb.HasTrigger("DELETE_USER");
+                    tb.HasTrigger("NEW_USER");
+                    tb.HasTrigger("UPDATE_USER");
+                });
 
             entity.Property(e => e.Email).IsUnicode(false);
-            entity.Property(e => e.Name).HasMaxLength(255);
             entity.Property(e => e.Password).IsUnicode(false);
             entity.Property(e => e.Phone)
                 .HasMaxLength(11)

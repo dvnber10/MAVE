@@ -1,6 +1,7 @@
 using MAVE.DTO;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Crypto.Engines;
 
 namespace MAVE.Repositories
 {
@@ -94,6 +95,38 @@ namespace MAVE.Repositories
             catch(Exception)
             {
                 return 1;
+            }
+        }
+
+        public async Task<InitialGraphicDTO?> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO iniVals = new InitialGraphicDTO();
+                int d = 0, i = 0, s = 0, c = 0;
+                var question = await _context.Questions.Where(q => q.UserId == id).ToListAsync();
+                var option = question.Join(
+                _context.CatOptions, q => q.OptionId, co => co.OptionId, (q, co) => new
+                {
+                    Value = co.Value                        
+                }).ToList(); 
+                if (option == null) return null;
+                foreach (var item in option)
+                {
+                    if (item.Value.Equals("D")) d++;
+                    if (item.Value.Equals("I")) i++;
+                    if (item.Value.Equals("S")) s++;
+                    if (item.Value.Equals("C")) c++;                    
+                }
+                iniVals.D = d;
+                iniVals.I = i;
+                iniVals.S = s;
+                iniVals.C = c; 
+                return iniVals;
+            }
+            catch(Exception)
+            {
+                return null;
             }
         }
     }

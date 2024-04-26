@@ -81,5 +81,19 @@ namespace MAVE.Services
                 return 2;
             }
         }
+
+        public async Task<InitialGraphicDTO?> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO? iniVals = new InitialGraphicDTO();
+                iniVals = await _repo.GetInitialGraphic(id);
+                return iniVals;
+            }
+            catch(Exception)
+            {
+                return null;
+            }
+        }
     }
 }

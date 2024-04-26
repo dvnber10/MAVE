@@ -46,7 +46,7 @@ namespace MAVE.Services
             if (userI == null) return false;
             // modify user for add to database
             var userU = new User{
-                    Name = user.UserName,
+                    //Name = user.UserName,
                     Phone = user.Phone,
                     Password = user.Password
                 };

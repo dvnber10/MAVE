@@ -124,8 +124,34 @@ namespace MAVE.Controllers
                 return BadRequest("Ocurrio un error: " + ex.Message);
 
             }
-
-
         }
+
+        [HttpGet]
+        [Authorize]
+        [Route("GetInitialGraphic/{id}")]
+        public async Task<IActionResult> GetInitialGraphic(int? id)
+        {
+            try
+            {
+                InitialGraphicDTO? iniVals = new InitialGraphicDTO();
+                if (id == null)
+                {
+                    return NotFound("El id esta vacío");
+                }
+                iniVals = await _serv.GetInitialGraphic(id);
+                if (iniVals == null)
+                {
+                    return NotFound("No se encontraron datos");
+                }
+                else
+                {
+                    return Ok(iniVals);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Algo salió mal: "+ex);
+            }
+        } 
     }
 }

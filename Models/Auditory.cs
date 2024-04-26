@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace MAVE.Models;
@@ -11,7 +11,7 @@ public partial class Auditory
 
     public string Action { get; set; } = null!;
 
-    public string OldValue { get; set; } = null!;
+    public string? OldValue { get; set; }
 
     public string NewValue { get; set; } = null!;
 
