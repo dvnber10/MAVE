@@ -17,6 +17,20 @@ namespace MAVE.Services
             _repo = repo;
             _tk = token;
         }
+        //Get Role by Id
+        public async  Task<int> GetRoleById(int? id)
+        {
+            try
+            {
+                int role;
+                role = await _repo.GetRoleById(id);
+                return role;
+            }
+            catch (Exception)
+            {
+                return 0;
+            }
+        }
 
         //Delete users method
         public async Task<bool> UserDelete(int? id)
@@ -108,6 +122,7 @@ namespace MAVE.Services
                 return 2;
             }
         }
+
         public async Task<int> RecoveryPass (string mail){
             var user = await _repo.GetUserByMail(mail);
             if (user ==null)
