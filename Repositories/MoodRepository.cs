@@ -19,7 +19,7 @@ namespace MAVE.Repositories
         {
             try
             {
-                var user = await _context.Users.FindAsync(id);
+                var user = await _context.Users.Where(u => u.UserId == id).FirstOrDefaultAsync();
                 if (user != null)
                 {
                     Mood md = new Mood
@@ -29,7 +29,7 @@ namespace MAVE.Repositories
                         UserId = user.UserId
                     };
                     _context.Moods.Add(md);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     return 1;
                 }
                 else
