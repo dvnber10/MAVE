@@ -10,20 +10,6 @@ namespace MAVE.Repositories
         public UserRepositories(DbAa60a4MavetestContext context){
             _context = context;
         }
-        public async Task<int> GetRoleById(int? id)
-        {
-            try
-            {
-                var user = await _context.Users.Where(r => r.UserId == id).FirstOrDefaultAsync();
-                if (user == null) return 0;
-                int role = user.RoleId;
-                return role;
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-        }
         public async Task UpdateUser (User user){
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
@@ -41,10 +27,12 @@ namespace MAVE.Repositories
             return await _context.Users.ToListAsync();
         }
         public async Task<User> GetUserByID(int? id){
+            #nullable disable
             var user = await _context.Users.FindAsync(id);
-            #pragma warning disable CS8603 // Possible null reference return.
+            user.Status = await _context.CatStatuses.Where(cs => cs.StatusId == user.StatusId).FirstOrDefaultAsync();
+            user.Role = await _context.CatRoles.Where(cr => cr.RoleId == user.RoleId).FirstOrDefaultAsync();
             return user;
-            #pragma warning restore CS8603 // Possible null reference return.
+            #nullable enable
         }
         public async Task<User?> GetUserByMail(string mail){
             var userC = await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);

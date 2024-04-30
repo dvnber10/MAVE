@@ -7,7 +7,7 @@ namespace MAVE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class QuestionController : ControllerBase
+    public class QuestionController : Controller
     {
         private readonly QuestionService _serv;
         public QuestionController(QuestionService serv)

@@ -23,7 +23,7 @@ namespace MAVE.Repositories
             {
                 var catQuestions = await _context.CatQuestions.Where(e => e.Initial == false).ToArrayAsync();
                 if(habit.Score == null || id == null) return 1;
-                int i = 0;
+                short i = 1;
                 DateTime date = DateTime.Now;
                 foreach (var h in habit.Score)
                 {
@@ -31,11 +31,11 @@ namespace MAVE.Repositories
                     {
                         ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
-                        QuestionId = catQuestions[i].CatQuestionId,
+                        CatQuestionId = i,
                         UserId = (int)id
                     };
                     _context.Update(question);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     i++;
                 }
                 return 0;
