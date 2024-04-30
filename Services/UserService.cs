@@ -17,20 +17,6 @@ namespace MAVE.Services
             _repo = repo;
             _tk = token;
         }
-        //Get Role by Id
-        public async  Task<int> GetRoleById(int? id)
-        {
-            try
-            {
-                int role;
-                role = await _repo.GetRoleById(id);
-                return role;
-            }
-            catch (Exception)
-            {
-                return 0;
-            }
-        }
 
         //Delete users method
         public async Task<bool> UserDelete(int? id)
@@ -81,7 +67,7 @@ namespace MAVE.Services
                     UserName = user.UserName,
                     Phone = user.Phone,
                     Password = user.Password,
-                    RoleId = 2,
+                    RoleId = 4,
                     EvaluationId = 1,
                     StatusId = 1
                 };
