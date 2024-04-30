@@ -227,6 +227,10 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_USER_CAT_EVALUATION");
 
+            entity.HasOne(d => d.HealthProfessional).WithMany(p => p.InverseHealthProfessional)
+                .HasForeignKey(d => d.HealthProfessionalId)
+                .HasConstraintName("FK_USER_USER");
+
             entity.HasOne(d => d.Role).WithMany(p => p.Users)
                 .HasForeignKey(d => d.RoleId)
                 .OnDelete(DeleteBehavior.ClientSetNull)

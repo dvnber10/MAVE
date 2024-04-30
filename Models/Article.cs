@@ -19,6 +19,8 @@ public partial class Article
 
     public short TypeId { get; set; }
 
+    public DateOnly Date { get; set; }
+
     public virtual CatArticleType Type { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
