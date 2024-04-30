@@ -27,7 +27,7 @@ namespace MAVE.Repositories
                 DateTime date = DateTime.Now;
                 foreach (var h in habit.Score)
                 {
-                    Question question = new Question
+                    Question question = new()
                     {
                         ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
@@ -35,7 +35,7 @@ namespace MAVE.Repositories
                         UserId = (int)id
                     };
                     _context.Questions.Update(question);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     i++;
                 }
                 return 0;
@@ -57,17 +57,15 @@ namespace MAVE.Repositories
             {
                 DateTime date = DateTime.Now;
                 String a;
-                var user = await _context.Users.FindAsync(Id);
+                var user = await _context.Users.FirstOrDefaultAsync(e => e.UserId == Id);
                 if (user == null)
                 {
                     return 1;
-                }
-                else 
-                {
+                }else{
                     user.EvaluationId = result;
                 }
-                _context.Update(user);
-                _context.SaveChanges();
+                _context.Users.Update(user);
+                await _context.SaveChangesAsync();
                 var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToArrayAsync();
                 int queId = 0;
                 foreach (char c in answers)
@@ -77,16 +75,16 @@ namespace MAVE.Repositories
                     var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
                     && e.Abcd == a).FirstOrDefault();
                     if(option == null || Id == null) return 1;
-
-                    Question question = new Question
+                    if(catQ == null) return 1;
+                    Question question = new()
                     {
                         CatQuestionId = catQ[queId].CatQuestionId,
                         OptionId = option.OptionId,
                         Date = DateOnly.FromDateTime(date),
                         UserId = Convert.ToInt32(Id)
                     };
-                    _context.Update(question);
-                    _context.SaveChanges();
+                    _context.Questions.Update(question);
+                    await _context.SaveChangesAsync();
                     queId++;
                 }
                 return 0;

@@ -42,6 +42,14 @@
               "target": "Package",
               "version": "[4.0.3, )"
             },
+            "CloudinaryDotNet": {
+              "target": "Package",
+              "version": "[1.26.2, )"
+            },
+            "Imgur.API": {
+              "target": "Package",
+              "version": "[5.0.0, )"
+            },
             "MailKit": {
               "target": "Package",
               "version": "[4.4.0, )"
