@@ -57,6 +57,9 @@ builder.Services.AddScoped<MoodRepository>();
 builder.Services.AddScoped<ArticleService>();
 builder.Services.AddScoped<ArticleRepository>();
 builder.Services.AddScoped<ImageUtility>();
+builder.Services.AddScoped<WhatsAppService>();
+builder.Services.AddScoped<WhatsAppRepository>();
+builder.Services.AddScoped<WhatsAppUtility>();
 builder.Configuration.AddJsonFile("appsettings.json");
 var SecretKey = builder.Configuration.GetSection("Settings").GetSection("secretKey").ToString();
 #pragma warning disable CS8604 // Possible null reference argument.
