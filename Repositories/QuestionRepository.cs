@@ -21,9 +21,9 @@ namespace MAVE.Repositories
         {
             try
             {
-                var catQuestions = await _context.CatQuestions.Where(e => e.Initial == false).ToArrayAsync();
+                var catQ = await _context.CatQuestions.Where(e => e.Initial == false).ToArrayAsync();
                 if(habit.Score == null || id == null) return 1;
-                int i = 0;
+                short i = 0;
                 DateTime date = DateTime.Now;
                 foreach (var h in habit.Score)
                 {
@@ -31,11 +31,11 @@ namespace MAVE.Repositories
                     {
                         ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
-                        QuestionId = catQuestions[i].CatQuestionId,
+                        CatQuestionId = catQ[i].CatQuestionId,
                         UserId = (int)id
                     };
                     _context.Update(question);
-                    _context.SaveChanges();
+                    await _context.SaveChangesAsync();
                     i++;
                 }
                 return 0;
@@ -56,8 +56,8 @@ namespace MAVE.Repositories
             try
             {
                 DateTime date = DateTime.Now;
-                String a;
-                var user = await _context.Users.FindAsync(Id);
+                string a;
+                var user = await _context.Users.Where(u => u.UserId == Id).FirstOrDefaultAsync();
                 if (user == null)
                 {
                     return 1;
@@ -68,21 +68,23 @@ namespace MAVE.Repositories
                 }
                 _context.Users.Update(user);
                 await _context.SaveChangesAsync();
-                var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToArrayAsync();
-                int queId = 0;
-                foreach (char c in answers)
+
+                var catQ = await _context.CatQuestions.Where(e => e.Initial == true).ToListAsync();
+                short queId = 14;
+                foreach (var c in answers)
                 {
-                    a = c + "";
-                    var option = _context.CatOptions.Where(e => e.CatQuestionId == catQ[queId].CatQuestionId
-                    && e.Abcd == a).FirstOrDefault();
-                    if(option == null || Id == null) return 1;
+                    a = c.ToString();
+                    var option = await _context.CatOptions.Where(co => co.CatQuestionId == queId
+                    && co.Abcd == a).FirstOrDefaultAsync();
 
                     Question question = new Question
                     {
-                        CatQuestionId = catQ[queId].CatQuestionId,
+                        CatQuestionId = queId,
+                        #nullable disable
                         OptionId = option.OptionId,
+                        #nullable enable
                         Date = DateOnly.FromDateTime(date),
-                        UserId = Convert.ToInt32(Id)
+                        UserId = user.UserId
                     };
                     _context.Questions.Update(question);
                     await _context.SaveChangesAsync();
@@ -127,6 +129,29 @@ namespace MAVE.Repositories
             {
                 return null;
             }
+        }
+        public async Task<double> GetPositiveReinforcement(int? id)
+        {
+            try
+            {
+                int points = 0, can = 0;
+                var one = await _context.Questions.Where(q => q.UserId == id && q.ScoreId !=null).ToListAsync();
+                foreach (var q in one)
+                {
+                    can++;
+                    if(q.ScoreId == 1 || q.ScoreId == 7) points += (int)q.ScoreId*1;
+                    if(q.ScoreId == 2) points += (int)q.ScoreId*2;
+                    if(q.ScoreId == 3) points += (int)q.ScoreId*3;
+                    if(q.ScoreId == 4) points += (int)q.ScoreId*4;
+                    if(q.ScoreId == 5 || q.ScoreId == 6) points += (int)q.ScoreId*5;
+                }
+                double fin = (double)points/(double)can;
+                return fin;
+            }   
+            catch(Exception)
+            {
+                return 0;
+            }         
         }
     }
 }

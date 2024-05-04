@@ -46,7 +46,7 @@ namespace MAVE.Services
             if (userI == null) return false;
             // modify user for add to database
             var userU = new User{
-                    Name = user.UserName,
+                    UserName = user.UserName,
                     Phone = user.Phone,
                     Password = user.Password
                 };
@@ -67,7 +67,7 @@ namespace MAVE.Services
                     UserName = user.UserName,
                     Phone = user.Phone,
                     Password = user.Password,
-                    RoleId = 2,
+                    RoleId = 4,
                     EvaluationId = 1,
                     StatusId = 1
                 };
@@ -108,6 +108,7 @@ namespace MAVE.Services
                 return 2;
             }
         }
+
         public async Task<int> RecoveryPass (string mail){
             var user = await _repo.GetUserByMail(mail);
             if (user ==null)

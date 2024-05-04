@@ -17,15 +17,19 @@ public partial class User
 
     public short RoleId { get; set; }
 
-    public string? Name { get; set; }
-
     public short EvaluationId { get; set; }
 
     public short StatusId { get; set; }
 
+    public int? HealthProfessionalId { get; set; }
+
     public virtual ICollection<Article> Articles { get; set; } = new List<Article>();
 
     public virtual CatEvaluation Evaluation { get; set; } = null!;
+
+    public virtual User? HealthProfessional { get; set; }
+
+    public virtual ICollection<User> InverseHealthProfessional { get; set; } = new List<User>();
 
     public virtual ICollection<Mood> Moods { get; set; } = new List<Mood>();
 

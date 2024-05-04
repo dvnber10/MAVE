@@ -1,3 +1,4 @@
+using System.Numerics;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
@@ -27,13 +28,15 @@ namespace MAVE.Repositories
             return await _context.Users.ToListAsync();
         }
         public async Task<User> GetUserByID(int? id){
+            #nullable disable
             var user = await _context.Users.FindAsync(id);
-            #pragma warning disable CS8603 // Possible null reference return.
+            user.Status = await _context.CatStatuses.Where(cs => cs.StatusId == user.StatusId).FirstOrDefaultAsync();
+            user.Role = await _context.CatRoles.Where(cr => cr.RoleId == user.RoleId).FirstOrDefaultAsync();
             return user;
-            #pragma warning restore CS8603 // Possible null reference return.
+            #nullable enable
         }
         public async Task<User?> GetUserByMail(string mail){
-            var userC =await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);
+            var userC = await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);
             return userC;
         }
     }

@@ -7,7 +7,7 @@ namespace MAVE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class QuestionController : ControllerBase
+    public class QuestionController : Controller
     {
         private readonly QuestionService _serv;
         public QuestionController(QuestionService serv)
@@ -42,7 +42,7 @@ namespace MAVE.Controllers
                 int res = await _serv.SetHabitQuestion(id, habit);
                 if (res == 0)
                 {
-                    return Ok("Se guardaron los datos exitósamente");
+                    return Ok(await _serv.GetPositiveReinforcement(id));
                 }
                 else if (res == 1)
                 {
