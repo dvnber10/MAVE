@@ -10,10 +10,12 @@ namespace MAVE.Services
         private readonly QuestionRepository _repo;
         private readonly UserRepositories _Urepo;
         private readonly EvaluationUtility _eva;
-        public QuestionService(QuestionRepository repository,UserRepositories userRepositories, EvaluationUtility eva){
+        private readonly UserService _Userv;
+        public QuestionService(QuestionRepository repository,UserRepositories userRepositories, EvaluationUtility eva, UserService user){
             _repo = repository;
             _Urepo = userRepositories;
             _eva = eva;
+            _Userv = user;
         }
         public async Task<List<CatQuestion>?> GetHabitQuestion(int? id){
             return await _repo.GetHabitQuestion();
@@ -93,6 +95,38 @@ namespace MAVE.Services
             catch(Exception)
             {
                 return null;
+            }
+        }
+        public async Task<string> GetPositiveReinforcement(int? id)
+        {
+            try
+            {
+                Random r = new Random();
+                string[] rein = ["¡Excelente trabajo! Veo que has puesto mucho esfuerzo en esta tarea.",
+                "Me siento muy orgulloso/a de ti por la manera en que has manejado este desafío.",
+                "Buen trabajo al mantenerte concentrado/a. Esa dedicación dará sus frutos.",
+                "Estoy impresionado/a por tu persistencia en resolver ese problema complicado.",
+                "Me alegra ver que has aprendido de tus errores anteriores. Estás en el camino correcto."];
+                var user = await _Userv.GetUserById(id);
+                double res = await _repo.GetPositiveReinforcement(id);
+                if(res == 0)
+                {
+                    return "2";
+                }
+                else if(res > 3)
+                {
+                    int index = r.Next(0,3);
+                    return rein[index];
+                }
+                else
+                {
+                    int index = r.Next(3, 5);
+                    return rein[4];
+                }
+            }
+            catch (Exception)
+            {
+                return "1";
             }
         }
     }

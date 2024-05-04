@@ -42,7 +42,7 @@ namespace MAVE.Controllers
                 int res = await _serv.SetHabitQuestion(id, habit);
                 if (res == 0)
                 {
-                    return Ok("Se guardaron los datos exitósamente");
+                    return Ok(await _serv.GetPositiveReinforcement(id));
                 }
                 else if (res == 1)
                 {
