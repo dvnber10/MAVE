@@ -4,19 +4,20 @@ using MAVE.Services;
 using Microsoft.EntityFrameworkCore;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using dotenv.net;
 
 namespace MAVE.Repositories
 {
     public class ArticleRepository
     {
+
         private readonly DbAa60a4MavetestContext _context;
         private readonly UserService _Userv;
-        public static readonly Account account = new Account(
-            "dvhg4fegu",
-            "142365139439512",
-            "UpOh_jG7d6rMpt1__kJD0x-O0io");
+        //public static readonly Account account = new Account(
+        //    "dvhg4fegu",
+        //    "142365139439512",
+        //    "UpOh_jG7d6rMpt1__kJD0x-O0io");
 
-        Cloudinary cloudinary = new Cloudinary(account);
 
         public ArticleRepository(DbAa60a4MavetestContext context, UserService userv)
         {
@@ -58,30 +59,23 @@ namespace MAVE.Repositories
                 var user = await _context.Users.Where(u => u.UserId == id).FirstOrDefaultAsync();
                 if (user == null) return 2;
                 if (user.RoleId != 3) return 3;
+                Console.WriteLine(art.Image);
                 DateTime date = new DateTime(art.Year, art.Month, art.Day);
                 if (art.ArticleName == null || art.Link == null || art.Resume == null || id == null) return 2;
-                cloudinary.Upload(new ImageUploadParams()
-                {
-                    File = new FileDescription(image),
-                    PublicId = art.ArticleName
-                });
-                SearchResult result = cloudinary.Search()
-                    .Expression("tags:"+art.ArticleName)
-                    .Execute();
-                    var res =result.JsonObj;
-                Console.WriteLine(res);
                 Article arti = new Article
                 {
                     UserId = (int)id,
                     ArticleName = art.ArticleName,
-                    Link = Convert.ToString(res["derived:url"]),
+                    Link = art.Link,
                     Picture = image,
                     Resume = art.Resume,
                     Date = DateOnly.FromDateTime(date),
                     TypeId = art.Type
                 };
-                _context.Articles.Update(arti);
+#pragma warning restore CS8601 // Possible null reference assignment.
+                await _context.Articles.AddAsync(arti);
                 await _context.SaveChangesAsync();
+
                 return 0;
             }
             catch (Exception)

@@ -34,7 +34,7 @@ namespace MAVE.Repositories
                         CatQuestionId = catQ[i].CatQuestionId,
                         UserId = (int)id
                     };
-                    _context.Update(question);
+                    _context.Questions.Update(question);
                     await _context.SaveChangesAsync();
                     i++;
                 }
@@ -56,8 +56,6 @@ namespace MAVE.Repositories
             try
             {
                 DateTime date = DateTime.Now;
-                String a;
-                var user = await _context.Users.FirstOrDefaultAsync(e => e.UserId == Id);
                 string a;
                 var user = await _context.Users.Where(u => u.UserId == Id).FirstOrDefaultAsync();
                 if (user == null)
@@ -73,13 +71,6 @@ namespace MAVE.Repositories
                 short queId = 14;
                 foreach (var c in answers)
                 {
-                    a = c + "";
-
-                    var option = _context.CatOptions.Where(e => e.CatQuestionId == queId
-                    && e.Abcd == a).FirstOrDefault();
-                    if(option == null || Id == null) return 1;
-                    if(catQ == null) return 1;
-                    Question question = new()
                     a = c.ToString();
                     var option = await _context.CatOptions.Where(co => co.CatQuestionId == queId
                     && co.Abcd == a).FirstOrDefaultAsync();

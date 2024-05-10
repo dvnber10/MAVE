@@ -87,6 +87,16 @@ namespace MAVE.Services
                 return false;
             }
         }
+        public async Task<List<User>?> GetAllUsers(int? id){
+            var user = await _repo.GetUserByIdFromInfo(id);
+            if(user==null){
+                return null;
+            }else
+            {
+                var users = await _repo.GetAllUsers();
+                return users;
+            }
+        }
 
         //Login Method
         public async Task<int> LogIn(string user, string pass)
@@ -135,7 +145,7 @@ namespace MAVE.Services
             return 1;
         }
         public async Task<User> GetUserById(int? id){
-            return await _repo.GetUserByID(id);
+            return await _repo.GetUserByIdFromInfo(id);
         }
     }
 }

@@ -2,6 +2,9 @@ using MAVE.DTO;
 using MAVE.Repositories;
 using MAVE.Utilities;
 using MAVE.Models;
+using dotenv.net;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
 
 namespace MAVE.Services
 {
@@ -33,10 +36,26 @@ namespace MAVE.Services
         {
             try
             {
-                string? imge = await _uti.ImageRoute(img);
-                int res = await _repo.PostArticle(id, imge, art);
+#pragma warning disable CS8604 // Possible null reference argument.
+                var route = _uti.ImageUpload(art.Image);
+                DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+                Cloudinary cloudinary = new(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+                cloudinary.Api.Secure = true;
+                var uploadParams = new ImageUploadParams()
+                {
+                    File = new FileDescription(@""+route.Result),
+                    UseFilename = true,
+                    UniqueFilename = false,
+                    Overwrite = true
+                };
+                var uploadResult = cloudinary.Upload(uploadParams);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+                string urlImage = Convert.ToString(uploadResult.SecureUrl);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+                int res = await _repo.PostArticle(id, urlImage, art);
                 if(res == 1) return 3;
                 if(res == 2) return 4;
+                File.Delete(route.Result);
                 return 0;
             }
             catch (Exception)

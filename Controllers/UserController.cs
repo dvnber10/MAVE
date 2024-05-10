@@ -156,5 +156,26 @@ namespace MAVE.Controllers
                 throw;
             }
         }
+        [HttpGet]
+        [Authorize]
+        [Route ("GetAllUsers/{id}")]
+        public async Task<IActionResult> GetAllUsers (int? id){
+            try
+            {
+                var users =await _serv.GetAllUsers(id);
+                if (users == null)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest,"Hubo un error al consultar los datos");
+                }else
+                {
+                    return Ok(users);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,ex.Message);
+                throw;
+            }
+        }
     }
 }
