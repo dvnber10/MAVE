@@ -61,7 +61,7 @@ namespace MAVE.Repositories
                     Date = DateOnly.FromDateTime(date),
                     TypeId = art.Type
                 };
-                _context.Articles.Update(arti);
+                await _context.Articles.AddAsync(arti);
                 await _context.SaveChangesAsync();
                 return 0;
             }

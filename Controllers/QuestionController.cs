@@ -42,7 +42,7 @@ namespace MAVE.Controllers
                 int res = await _serv.SetHabitQuestion(id, habit);
                 if (res == 0)
                 {
-                    return Ok(await _serv.GetPositiveReinforcement(id));
+                    return Ok("Los datos se han guardado");
                 }
                 else if (res == 1)
                 {
@@ -151,6 +151,25 @@ namespace MAVE.Controllers
             catch (Exception ex)
             {
                 return BadRequest("Algo salió mal: "+ex);
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("PositiveReinforcement/{id}")]
+        public async Task<IActionResult> PositiveReinforcement(int? id)
+        {
+            try
+            {
+                MessageDTO m = new MessageDTO();
+                m.Message = await _serv.GetPositiveReinforcement(id);
+                if (m.Message == "1") return BadRequest("Algo salió mal en el service");
+                else if (m.Message == "2") return BadRequest("Algo salió mal en el repository");
+                else return Ok(m);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Algo salió mal: "+ex.Message);
             }
         } 
     }
