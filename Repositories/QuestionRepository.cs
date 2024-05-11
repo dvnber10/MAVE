@@ -105,7 +105,7 @@ namespace MAVE.Repositories
             {
                 InitialGraphicDTO iniVals = new InitialGraphicDTO();
                 int d = 0, i = 0, s = 0, c = 0;
-                var question = await _context.Questions.Where(q => q.UserId == id).ToListAsync();
+                var question = await _context.Questions.Where(q => q.UserId == id && q.OptionId != null).ToListAsync();
                 var option = question.Join(
                 _context.CatOptions, q => q.OptionId, co => co.OptionId, (q, co) => new
                 {

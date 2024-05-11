@@ -3,11 +3,11 @@ using MAVE.Utilities;
 
 namespace MAVE.Services
 {
-    public class WhatsAppService
+    public class NotifyService
     {
-        private readonly WhatsAppRepository _repo;
+        private readonly NotifyRepository _repo;
         private readonly WhatsAppUtility _uti;
-        public WhatsAppService(WhatsAppRepository repo, WhatsAppUtility uti)
+        public NotifyService(NotifyRepository repo, WhatsAppUtility uti)
         {   
             _repo = repo;
             _uti = uti;

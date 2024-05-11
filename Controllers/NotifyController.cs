@@ -5,10 +5,10 @@ namespace MAVE.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WhatsAppController : ControllerBase
+    public class NotifyController : ControllerBase
     {
-        readonly WhatsAppService _serv;
-        public WhatsAppController(WhatsAppService serv)
+        readonly NotifyService _serv;
+        public NotifyController(NotifyService serv)
         {
             _serv = serv;
         }

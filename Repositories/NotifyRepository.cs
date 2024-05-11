@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MAVE.Repositories
 {     
-    public class WhatsAppRepository
+    public class NotifyRepository
     {
         private readonly DbAa60a4MavetestContext _context;
-        public WhatsAppRepository(DbAa60a4MavetestContext context)
+        public NotifyRepository(DbAa60a4MavetestContext context)
         {
             _context = context;
         }
