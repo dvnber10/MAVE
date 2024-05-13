@@ -53,9 +53,9 @@ namespace MAVE.Services
                 string urlImage = Convert.ToString(uploadResult.SecureUrl);
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
                 int res = await _repo.PostArticle(id, urlImage, art);
+                File.Delete(route.Result);
                 if(res == 1) return 3;
                 if(res == 2) return 4;
-                File.Delete(route.Result);
                 return 0;
             }
             catch (Exception)

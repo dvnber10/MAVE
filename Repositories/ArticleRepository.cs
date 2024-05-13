@@ -73,7 +73,7 @@ namespace MAVE.Repositories
                     TypeId = art.Type
                 };
 #pragma warning restore CS8601 // Possible null reference assignment.
-                await _context.Articles.AddAsync(arti);
+                _context.Articles.Update(arti);
                 await _context.SaveChangesAsync();
 
                 return 0;
