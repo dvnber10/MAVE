@@ -72,8 +72,7 @@ namespace MAVE.Repositories
                     Date = DateOnly.FromDateTime(date),
                     TypeId = art.Type
                 };
-#pragma warning restore CS8601 // Possible null reference assignment.
-                _context.Articles.Update(arti);
+                await _context.Articles.AddAsync(arti);
                 await _context.SaveChangesAsync();
 
                 return 0;

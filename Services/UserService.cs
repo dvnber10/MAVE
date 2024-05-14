@@ -40,18 +40,13 @@ namespace MAVE.Services
         }
 
         //Update users method
-        public async Task<bool> UpdateUser(UserSigInDTO user)
+        public async Task<bool> UpdateUser(UpdateUserDTO user, int? id)
         {
-            var userI = _repo.GetUserByMail(user.Email);
+            var userI =await _repo.GetUserByIdFromInfo(id);
             if (userI == null) return false;
             // modify user for add to database
-            var userU = new User{
-                    //Name = user.UserName,
-                    Phone = user.Phone,
-                    Password = user.Password
-                };
-            user.Password = TokenAndEncipt.HashPass(userU.Password);
-            await _repo.UpdateUser(userU);
+
+            await _repo.UpdateUserComplete(userI, user);
             return true;
         }
 

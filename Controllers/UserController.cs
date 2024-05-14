@@ -37,15 +37,19 @@ namespace MAVE.Controllers
 
         [HttpPut]
         [Authorize]
-        [Route("UpdateUser")]
-        public async Task<IActionResult> UserUpdate([FromBody] UserSigInDTO user){
+        [Route("UpdateUser/{id}")]
+        public async Task<IActionResult> UserUpdate([FromBody] UpdateUserDTO user, int? id){
+            if (await _serv.GetUserById(id)== null)
+            {
+                return BadRequest("Error al encontrar el usuario actual");
+            }
             if (user.UserName == string.Empty)
             {
                 ModelState.AddModelError("Nombre", "El nombre no puede estar vacio");
             }
-            if (await _serv.UpdateUser(user))
+            if (await _serv.UpdateUser(user, id))
             {
-                return Ok("usuario creado correctamente");
+                return Ok("usuario actualizado correctamente");
             }
             else
             {

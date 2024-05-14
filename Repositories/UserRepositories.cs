@@ -1,3 +1,5 @@
+using System.Numerics;
+using MAVE.DTO;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
@@ -13,6 +15,14 @@ namespace MAVE.Repositories
         public async Task<List<User>> GetAllUser(){
             var users = await _context.Users.ToListAsync();
             return users;
+        }
+        public async Task UpdateUserComplete (User user,UpdateUserDTO userEntrante){
+            user.Email = userEntrante.Email;
+            user.UserName = userEntrante.UserName;
+            user.Phone= userEntrante.Phone;
+            user.RoleId = userEntrante.IdRole;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
         public async Task UpdateUser (User user){
             _context.Users.Update(user);

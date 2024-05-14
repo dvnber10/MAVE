@@ -470,3 +470,4 @@ C:/Users/osfel/Source/Repos/MAVE/obj/Debug/net8.0/ref/MAVE.dll
 /home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/bin/Debug/net8.0/CloudinaryDotNet.dll
 /home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/bin/Debug/net8.0/Newtonsoft.Json.dll
 /home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/bin/Debug/net8.0/dotenv.net.dll
+/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/bin/Debug/net8.0/RestSharp.dll

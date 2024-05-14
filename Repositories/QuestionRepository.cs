@@ -103,7 +103,7 @@ namespace MAVE.Repositories
             {
                 InitialGraphicDTO iniVals = new InitialGraphicDTO();
                 int d = 0, i = 0, s = 0, c = 0;
-                var question = await _context.Questions.Where(q => q.UserId == id).ToListAsync();
+                var question = await _context.Questions.Where(q => q.UserId == id && q.OptionId != null).ToListAsync();
                 var option = question.Join(
                 _context.CatOptions, q => q.OptionId, co => co.OptionId, (q, co) => new
                 {
@@ -127,6 +127,29 @@ namespace MAVE.Repositories
             {
                 return null;
             }
+        }
+        public async Task<double> GetPositiveReinforcement(int? id)
+        {
+            try
+            {
+                int points = 0, can = 0;
+                var one = await _context.Questions.Where(q => q.UserId == id && q.ScoreId !=null).ToListAsync();
+                foreach (var q in one)
+                {
+                    can++;
+                    if(q.ScoreId == 1 || q.ScoreId == 7) points += (int)q.ScoreId*1;
+                    if(q.ScoreId == 2) points += (int)q.ScoreId*2;
+                    if(q.ScoreId == 3) points += (int)q.ScoreId*3;
+                    if(q.ScoreId == 4) points += (int)q.ScoreId*4;
+                    if(q.ScoreId == 5 || q.ScoreId == 6) points += (int)q.ScoreId*5;
+                }
+                double fin = (double)points/(double)can;
+                return fin;
+            }   
+            catch(Exception)
+            {
+                return 0;
+            }         
         }
     }
 }
