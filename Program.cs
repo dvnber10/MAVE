@@ -20,7 +20,7 @@ builder.Services.AddSwaggerGen(
         options.SwaggerDoc("v1", new OpenApiInfo{
             Title = "Mave API",
             Version = "v1",
-            Description = "Api para la gestion de usuarios y procesos para el seguimiento del estado animico"
+            Description = "Esta es la API de MAVE, esta API esta enfocada en ser una herramienta útil para los profesionales la salud mental, priorizando el estado anímico del usuario, también hay una función que permite encasillar a las personas en cuatro perfiles los cuales son dominante, influyente, estable y concienzudo. Tambien hay una funcionalidad que permite hacer un seguimiento de los hábitos de los usuarios, asi como también hay funciones para generar gráficas y reportes acerca de los aspectos más importantes."
         });
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme(){
             Description = "JWT Token usar Bearer {token}",
