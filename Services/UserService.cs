@@ -137,5 +137,11 @@ namespace MAVE.Services
         public async Task<User> GetUserById(int? id){
             return await _repo.GetUserByID(id);
         }
+
+        public async Task<bool> GetUserByName(string name)
+        {
+            if(await _repo.GetUserByName(name) != null) return false;
+            else return true;
+        }
     }
 }
