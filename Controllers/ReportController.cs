@@ -17,7 +17,7 @@ namespace MAVE.Controllers
 
         [HttpGet]
         [Authorize]
-        [Route("GetInitialReport")]
+        [Route("GetInitialReport/{id}")]
         public async Task<IActionResult> GetInitialReport(int? id)
         {
             try
