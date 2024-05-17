@@ -61,7 +61,10 @@ namespace MAVE.Repositories
                 if (user == null)
                 {
                     return 1;
-                }else{
+                }
+                else 
+                {
+                    result++;
                     user.EvaluationId = result;
                 }
                 _context.Users.Update(user);

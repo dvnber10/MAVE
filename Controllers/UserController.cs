@@ -66,6 +66,7 @@ namespace MAVE.Controllers
             {
                 ModelState.AddModelError("Nombre", "Nombre no puede estar vacio");
             }
+            if (await _serv.GetUserByName(user.UserName) == false) return BadRequest("Este nombre de usuario ya existe intenta utilizar otro");
             if(await _serv.CreateUser(user))
             {
                 var userA = await _serv.GetUserByMail(user.Email);
