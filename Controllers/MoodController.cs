@@ -9,7 +9,7 @@ namespace MAVE.Controllers
     [Route("api/[controller]")]
     public class MoodController: Controller
     {
-        private readonly Services.MoodService _serv;
+        private readonly MoodService _serv;
 
         public MoodController(MoodService serv)
         {

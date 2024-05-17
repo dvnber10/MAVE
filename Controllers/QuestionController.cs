@@ -69,7 +69,7 @@ namespace MAVE.Controllers
                 var questions = await _serv.GetInitialQuestion(id);
                 if (questions == null)
                 {
-                    return BadRequest("El usuario ya hizo la evaluación inicial");
+                    return StatusCode(StatusCodes.Status202Accepted, "El usuario ya realizo la evaluacion inicial");
                 }
                 else
                 {
@@ -155,7 +155,6 @@ namespace MAVE.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         [Route("PositiveReinforcement/{id}")]
         public async Task<IActionResult> PositiveReinforcement(int? id)
         {

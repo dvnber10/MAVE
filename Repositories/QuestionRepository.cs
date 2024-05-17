@@ -27,14 +27,14 @@ namespace MAVE.Repositories
                 DateTime date = DateTime.Now;
                 foreach (var h in habit.Score)
                 {
-                    Question question = new Question
+                    Question question = new()
                     {
                         ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
                         CatQuestionId = catQ[i].CatQuestionId,
                         UserId = (int)id
                     };
-                    _context.Update(question);
+                    _context.Questions.Update(question);
                     await _context.SaveChangesAsync();
                     i++;
                 }

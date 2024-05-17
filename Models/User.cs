@@ -16,7 +16,6 @@ public partial class User
     public string Password { get; set; } = null!;
 
     public short RoleId { get; set; }
-
     public short EvaluationId { get; set; }
 
     public short StatusId { get; set; }

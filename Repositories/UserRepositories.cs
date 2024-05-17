@@ -1,4 +1,5 @@
 using System.Numerics;
+using MAVE.DTO;
 using MAVE.Models;
 using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver.Linq;
@@ -10,6 +11,18 @@ namespace MAVE.Repositories
         private readonly  DbAa60a4MavetestContext _context;
         public UserRepositories(DbAa60a4MavetestContext context){
             _context = context;
+        }
+        public async Task<List<User>> GetAllUser(){
+            var users = await _context.Users.ToListAsync();
+            return users;
+        }
+        public async Task UpdateUserComplete (User user,UpdateUserDTO userEntrante){
+            user.Email = userEntrante.Email;
+            user.UserName = userEntrante.UserName;
+            user.Phone= userEntrante.Phone;
+            user.RoleId = userEntrante.IdRole;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
         }
         public async Task UpdateUser (User user){
             _context.Users.Update(user);
@@ -34,6 +47,12 @@ namespace MAVE.Repositories
             user.Role = await _context.CatRoles.Where(cr => cr.RoleId == user.RoleId).FirstOrDefaultAsync();
             return user;
             #nullable enable
+        }
+        public async Task<User> GetUserByIdFromInfo(int? id){
+            var user = await _context.Users.FindAsync(id);
+#pragma warning disable CS8603 // Possible null reference return.
+            return user;
+#pragma warning restore CS8603 // Possible null reference return.
         }
         public async Task<User?> GetUserByMail(string mail){
             var userC = await _context.Users.FirstOrDefaultAsync(e=>e.Email==mail);

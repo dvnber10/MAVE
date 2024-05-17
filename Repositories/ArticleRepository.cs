@@ -2,13 +2,23 @@ using MAVE.DTO;
 using MAVE.Models;
 using MAVE.Services;
 using Microsoft.EntityFrameworkCore;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using dotenv.net;
 
 namespace MAVE.Repositories
 {
     public class ArticleRepository
     {
+
         private readonly DbAa60a4MavetestContext _context;
         private readonly UserService _Userv;
+        //public static readonly Account account = new Account(
+        //    "dvhg4fegu",
+        //    "142365139439512",
+        //    "UpOh_jG7d6rMpt1__kJD0x-O0io");
+
+
         public ArticleRepository(DbAa60a4MavetestContext context, UserService userv)
         {
             _context = context;
@@ -20,12 +30,12 @@ namespace MAVE.Repositories
             try
             {
                 var user = await _Userv.GetUserById(id);
-                if(user == null)
+                if (user == null)
                 {
                     return null;
                 }
                 //Role 2 => Admin, Role 3 => Psycho, Role 4 => User
-                if(user.RoleId == 3)
+                if (user.RoleId == 3)
                 {
                     var article = await _context.Articles.Where(a => a.UserId == id).ToListAsync();
                     return article;
@@ -34,7 +44,7 @@ namespace MAVE.Repositories
                 {
                     var article = await _context.Articles.ToListAsync();
                     return article;
-                }   
+                }
             }
             catch (Exception)
             {
@@ -47,10 +57,11 @@ namespace MAVE.Repositories
             try
             {
                 var user = await _context.Users.Where(u => u.UserId == id).FirstOrDefaultAsync();
-                if(user == null) return 2;
-                if(user.RoleId != 3) return 3;
+                if (user == null) return 2;
+                if (user.RoleId != 3) return 3;
+                Console.WriteLine(art.Image);
                 DateTime date = new DateTime(art.Year, art.Month, art.Day);
-                if(art.ArticleName == null || art.Link == null || art.Resume == null || id == null) return 2;
+                if (art.ArticleName == null || art.Link == null || art.Resume == null || id == null) return 2;
                 Article arti = new Article
                 {
                     UserId = (int)id,
@@ -63,6 +74,7 @@ namespace MAVE.Repositories
                 };
                 await _context.Articles.AddAsync(arti);
                 await _context.SaveChangesAsync();
+
                 return 0;
             }
             catch (Exception)
@@ -71,19 +83,19 @@ namespace MAVE.Repositories
             }
         }
 
-        public async Task<int> PutArticle( int? id, string img, ArticleWhitImageDTO art)
+        public async Task<int> PutArticle(int? id, string img, ArticleWhitImageDTO art)
         {
             try
             {
                 var user = await _context.Users.Where(u => u.UserId == id).FirstOrDefaultAsync();
-                if(user == null) return 1;
-                if(user.RoleId != 3) return 3;
+                if (user == null) return 1;
+                if (user.RoleId != 3) return 3;
                 DateTime date = new DateTime(art.Year, art.Month, art.Day);
-                if(art.ArticleName == null || art.Link == null || art.Resume == null || id == null) return 2;
-                var article = await _context.Articles.Where(a => a.ArticleName == art.ArticleName 
+                if (art.ArticleName == null || art.Link == null || art.Resume == null || id == null) return 2;
+                var article = await _context.Articles.Where(a => a.ArticleName == art.ArticleName
                 && a.UserId == id).FirstOrDefaultAsync();
                 if (article == null) return 1;
-                if(img != null)
+                if (img != null)
                 {
                     article.UserId = (int)id;
                     article.ArticleName = art.ArticleName;
@@ -122,7 +134,7 @@ namespace MAVE.Repositories
                 ArticleDTO art = new ArticleDTO();
                 var arti = await _context.Articles.Where(a => a.ArticleName == name && a.UserId == id).FirstOrDefaultAsync();
                 User user = await _Userv.GetUserById(id);
-                if(arti != null)
+                if (arti != null)
                 {
                     var type = await _context.CatArticleTypes.Where(cat => cat.TypeId == arti.TypeId).FirstOrDefaultAsync();
                     art.ArticleName = arti.ArticleName;
