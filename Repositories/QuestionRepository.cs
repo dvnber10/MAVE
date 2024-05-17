@@ -27,14 +27,14 @@ namespace MAVE.Repositories
                 DateTime date = DateTime.Now;
                 foreach (var h in habit.Score)
                 {
-                    Question question = new Question
+                    Question question = new()
                     {
                         ScoreId = h,
                         Date = DateOnly.FromDateTime(date),
                         CatQuestionId = catQ[i].CatQuestionId,
                         UserId = (int)id
                     };
-                    _context.Update(question);
+                    _context.Questions.Update(question);
                     await _context.SaveChangesAsync();
                     i++;
                 }
@@ -64,6 +64,7 @@ namespace MAVE.Repositories
                 }
                 else 
                 {
+                    result++;
                     user.EvaluationId = result;
                 }
                 _context.Users.Update(user);
@@ -105,7 +106,7 @@ namespace MAVE.Repositories
             {
                 InitialGraphicDTO iniVals = new InitialGraphicDTO();
                 int d = 0, i = 0, s = 0, c = 0;
-                var question = await _context.Questions.Where(q => q.UserId == id).ToListAsync();
+                var question = await _context.Questions.Where(q => q.UserId == id && q.OptionId != null).ToListAsync();
                 var option = question.Join(
                 _context.CatOptions, q => q.OptionId, co => co.OptionId, (q, co) => new
                 {

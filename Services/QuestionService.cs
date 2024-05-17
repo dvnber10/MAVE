@@ -90,6 +90,8 @@ namespace MAVE.Services
             {
                 InitialGraphicDTO? iniVals = new InitialGraphicDTO();
                 iniVals = await _repo.GetInitialGraphic(id);
+                if (iniVals != null) iniVals = _eva.GetInitialScores(iniVals.D, iniVals.I, iniVals.S, iniVals.C);
+                else return null;
                 return iniVals;
             }
             catch(Exception)

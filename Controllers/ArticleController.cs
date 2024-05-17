@@ -3,6 +3,7 @@ using MAVE.Services;
 using Microsoft.AspNetCore.Authorization;
 using MAVE.DTO;
 using MAVE.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace MAVE.Controllers
 {
@@ -38,7 +39,7 @@ namespace MAVE.Controllers
         [HttpPost]
         [Authorize]
         [Route("PostArticle/{id}")]
-        public async Task<IActionResult> PostArticle(int? id, [FromForm] ArticleWhitImageDTO art)
+        public async Task<IActionResult> PostArticle(int? id, [FromBody] ArticleWhitImageDTO art)
         {
             try
             {
@@ -59,7 +60,7 @@ namespace MAVE.Controllers
         [HttpPut]
         [Authorize]
         [Route("PutArticle/{id}")]
-        public async Task<IActionResult> PutArticle(int? id, [FromForm] ArticleWhitImageDTO art)
+        public async Task<IActionResult> PutArticle(int? id, [FromBody] ArticleWhitImageDTO art)
         {
             try
             {

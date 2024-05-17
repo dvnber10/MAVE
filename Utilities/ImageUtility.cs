@@ -28,5 +28,14 @@ namespace MAVE.Utilities
                 return e.Message;
             }
         }
+        public async Task<string> ImageUpload(IFormFile img){
+            var Name = Guid.NewGuid().ToString()+".jpg";
+            string Route = $"Upload/{Name}";
+            using (var stream = new FileStream(Route,FileMode.Create))
+            {
+                await img.CopyToAsync(stream);
+            }
+            return Route;
+        }
     }
 }

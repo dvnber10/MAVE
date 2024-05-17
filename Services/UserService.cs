@@ -40,18 +40,13 @@ namespace MAVE.Services
         }
 
         //Update users method
-        public async Task<bool> UpdateUser(UserSigInDTO user)
+        public async Task<bool> UpdateUser(UpdateUserDTO user, int? id)
         {
-            var userI = _repo.GetUserByMail(user.Email);
+            var userI =await _repo.GetUserByIdFromInfo(id);
             if (userI == null) return false;
             // modify user for add to database
-            var userU = new User{
-                    UserName = user.UserName,
-                    Phone = user.Phone,
-                    Password = user.Password
-                };
-            user.Password = TokenAndEncipt.HashPass(userU.Password);
-            await _repo.UpdateUser(userU);
+
+            await _repo.UpdateUserComplete(userI, user);
             return true;
         }
 
@@ -85,6 +80,16 @@ namespace MAVE.Services
             else
             {
                 return false;
+            }
+        }
+        public async Task<List<User>?> GetAllUsers(int? id){
+            var user = await _repo.GetUserByIdFromInfo(id);
+            if(user==null){
+                return null;
+            }else
+            {
+                var users = await _repo.GetAllUsers();
+                return users;
             }
         }
 
@@ -135,7 +140,13 @@ namespace MAVE.Services
             return 1;
         }
         public async Task<User> GetUserById(int? id){
-            return await _repo.GetUserByID(id);
+            return await _repo.GetUserByIdFromInfo(id);
+        }
+
+        public async Task<bool> GetUserByName(string name)
+        {
+            if(await _repo.GetUserByName(name) != null) return false;
+            else return true;
         }
     }
 }
