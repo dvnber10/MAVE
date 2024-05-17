@@ -17,9 +17,6 @@ namespace MAVE.Repositories
             return users;
         }
         public async Task UpdateUserComplete (User user,UpdateUserDTO userEntrante){
-            user.Email = userEntrante.Email;
-            user.UserName = userEntrante.UserName;
-            user.Phone= userEntrante.Phone;
             user.RoleId = userEntrante.IdRole;
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

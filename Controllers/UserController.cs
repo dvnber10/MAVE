@@ -43,10 +43,6 @@ namespace MAVE.Controllers
             {
                 return BadRequest("Error al encontrar el usuario actual");
             }
-            if (user.UserName == string.Empty)
-            {
-                ModelState.AddModelError("Nombre", "El nombre no puede estar vacio");
-            }
             if (await _serv.UpdateUser(user, id))
             {
                 return Ok("usuario actualizado correctamente");
@@ -61,7 +57,7 @@ namespace MAVE.Controllers
         [HttpPost]
         [Route("SigIn")]
         public async Task<IActionResult> SigIn(UserSigInDTO user){
-            if (user == null) return BadRequest();
+            if (user == null) return BadRequest("No se ingresaron todos los datos");
             if (user.UserName == string.Empty)
             {
                 ModelState.AddModelError("Nombre", "Nombre no puede estar vacio");
