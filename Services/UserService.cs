@@ -56,7 +56,7 @@ namespace MAVE.Services
             //verify entry not null
             if(await _repo.GetUserByMail(user.Email) == null)
             {
-                String url = "https://bvdnxbgz-5173.use2.devtunnels.ms";
+                String url = "https://front-mave.vercel.app/";
                 var userU = new User{
                     Email = user.Email,
                     UserName = user.UserName,
@@ -123,7 +123,7 @@ namespace MAVE.Services
             else
             {
                 var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
-                string url = "https://v00lqp9l-5173.use2.devtunnels.ms/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
+                string url = "https://front-mave.vercel.app/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,
                     Affair = "Recovery Password Mave",
