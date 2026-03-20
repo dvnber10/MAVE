@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj": {}
+    "/home/duvan/Documents/Development/C#/MAVE/MAVE.csproj": {}
   },
   "projects": {
-    "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj": {
+    "/home/duvan/Documents/Development/C#/MAVE/MAVE.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj",
+        "projectUniqueName": "/home/duvan/Documents/Development/C#/MAVE/MAVE.csproj",
         "projectName": "MAVE",
-        "projectPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/MAVE.csproj",
-        "packagesPath": "/home/dvn/.nuget/packages/",
-        "outputPath": "/home/dvn/Documentos/Desarrollo/C#/MAVE/MAVE/obj/",
+        "projectPath": "/home/duvan/Documents/Development/C#/MAVE/MAVE.csproj",
+        "packagesPath": "/home/duvan/.nuget/packages/",
+        "outputPath": "/home/duvan/Documents/Development/C#/MAVE/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/home/dvn/.nuget/NuGet/NuGet.Config"
+          "/home/duvan/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -32,7 +32,13 @@
           "warnAsError": [
             "NU1605"
           ]
-        }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -113,7 +119,15 @@
           "downloadDependencies": [
             {
               "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.4, 8.0.4]"
+              "version": "[8.0.24, 8.0.24]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.win-x64",
+              "version": "[8.0.24, 8.0.24]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.24, 8.0.24]"
             }
           ],
           "frameworkReferences": {
@@ -124,7 +138,12 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.104/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/10.0.103/PortableRuntimeIdentifierGraph.json"
+        }
+      },
+      "runtimes": {
+        "win-x64": {
+          "#import": []
         }
       }
     }
