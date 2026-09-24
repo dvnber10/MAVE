@@ -30,7 +30,36 @@ namespace MAVE.Utilities
             };
             var TokenHandler = new JwtSecurityTokenHandler();
             var token = TokenHandler.CreateToken(tokenDescriptor);
-            return TokenHandler.WriteToken(token); 
+            return TokenHandler.WriteToken(token);
+        }
+        /// <summary>
+        /// Valida un JWT con la misma llave y vigencia del login.
+        /// Devuelve (Ok, Email, UserId). Nunca lanza.
+        /// </summary>
+        public (bool Ok, string? Email, string? UserId) ValidateToken(string? token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return (false, null, null);
+            try
+            {
+                var secret = _config["Key:secretKey"];
+                if (string.IsNullOrEmpty(secret)) return (false, null, null);
+                var handler = new JwtSecurityTokenHandler();
+                var parameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret)){ KeyId = "mave-signing-key" },
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero
+                };
+                var principal = handler.ValidateToken(token.Trim(), parameters, out _);
+                var email = principal.FindFirst(ClaimTypes.Email)?.Value;
+                var uid = principal.FindFirst(ClaimTypes.Role)?.Value;
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(uid)) return (false, null, null);
+                return (true, email, uid);
+            }
+            catch { return (false, null, null); }
         }
     }
 }

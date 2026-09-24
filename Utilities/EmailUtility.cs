@@ -3,6 +3,8 @@ using MailKit.Net.Smtp;
 using MimeKit.Text;
 using MimeKit;
 using MAVE.DTO;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace MAVE.Utilities
 {
@@ -45,6 +47,21 @@ namespace MAVE.Utilities
             };
 
             using var smtp = new SmtpClient();
+            // Tolera únicamente "revocación desconocida" (redes que bloquean
+            // la comprobación OCSP/CRL). Cualquier otro error de cadena sigue
+            // rechazándose para no aceptar certificados falsos.
+            smtp.ServerCertificateValidationCallback = (sender, cert, chain, errors) =>
+            {
+                if (errors == SslPolicyErrors.None) return true;
+                if (errors != SslPolicyErrors.RemoteCertificateChainErrors || chain == null) return false;
+                foreach (var status in chain.ChainStatus)
+                {
+                    if (status.Status != X509ChainStatusFlags.RevocationStatusUnknown &&
+                        status.Status != X509ChainStatusFlags.OfflineRevocation)
+                        return false;
+                }
+                return true;
+            };
             smtp.Connect(host, port, SecureSocketOptions.StartTls);
             smtp.Authenticate(userName, passWord);
 

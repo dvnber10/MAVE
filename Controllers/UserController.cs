@@ -243,9 +243,19 @@ namespace MAVE.Controllers
             }
         }
         [HttpPut]
-        [Authorize]
         [Route ("PasswordReset/{id}")]
         public async Task<IActionResult> PasswordReset ([FromBody] RecoveryPassDTO rest, int? id ){
+            // El reseteo llega por email, no por sesión: se valida el token
+            // Bearer contra la misma llave del login (sin cookies).
+            var auth = Request.Headers["Authorization"].ToString();
+            var bearer = auth.StartsWith("Bearer ") ? auth.Substring(7) : string.Empty;
+            var (ok, email, uid) = _token.ValidateToken(bearer);
+            if (!ok) return StatusCode(StatusCodes.Status401Unauthorized, "Enlace inválido o vencido");
+            var target = await _serv.GetUserById(id);
+            if (target == null) return NotFound("Usuario no encontrado");
+            if (!string.Equals(target.Email, email, StringComparison.OrdinalIgnoreCase)
+                || Convert.ToString(target.UserId) != uid)
+                return StatusCode(StatusCodes.Status403Forbidden, "El enlace no corresponde a este usuario");
             if (await _serv.ResetPass(id,rest.Data)==1 )
             {
                 return Ok("Contraseña cambiada correctamente");

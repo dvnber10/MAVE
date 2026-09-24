@@ -2,6 +2,7 @@
 using MAVE.Models;
 using MAVE.Repositories;
 using MAVE.Utilities;
+using Microsoft.Extensions.Configuration;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using dotenv.net;
@@ -16,11 +17,13 @@ namespace MAVE.Services
         private readonly UserRepositories _repo;
         private readonly TokenAndEncipt _tk;
         private readonly EmailUtility _mail;
-        public UserService(UserRepositories repo, TokenAndEncipt token, EmailUtility mail)
+        private readonly string _frontendBase;
+        public UserService(UserRepositories repo, TokenAndEncipt token, EmailUtility mail, IConfiguration config)
         {
             _mail= mail;
             _repo = repo;
             _tk = token;
+            _frontendBase = (config["Frontend:BaseUrl"] ?? "https://front-mave.vercel.app").TrimEnd('/');
         }
 
         //Delete users method
@@ -94,7 +97,7 @@ namespace MAVE.Services
             //verify entry not null
             if(await _repo.GetUserByMail(user.Email) == null)
             {
-                String url = "https://front-mave.vercel.app/";
+                String url = _frontendBase + "/";
                 var userU = new User{
                     Email = user.Email,
                     UserName = user.UserName,
@@ -290,7 +293,7 @@ namespace MAVE.Services
             else
             {
                 var tokenPass = _tk.GenerarToken(mail,Convert.ToString(user.UserId));
-                string url = "https://front-mave.vercel.app/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
+                string url = _frontendBase + "/ResetPassword/?token="+tokenPass+"/?id="+user.UserId;
                 var emailRequest = new EmailDTO{
                     Addressee = user.Email,
                     Affair = "Recovery Password Mave",
