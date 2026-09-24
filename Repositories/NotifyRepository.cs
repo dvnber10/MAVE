@@ -29,6 +29,19 @@ namespace MAVE.Repositories
                 return null;
             }
         }
+        public async Task<bool> HasMoodToday(int id)
+        {
+            var today = DateTime.Now.Date;
+            if (await _context.Moods.AnyAsync(m => m.UserId == id && m.Date.Date == today)) return true;
+            return await _context.Auditories.AnyAsync(a => a.UserId == id && a.Action == "MOOD_PHQ4" && a.Date.Date == today);
+        }
+
+        public async Task<bool> HasHabitsToday(int id)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Now);
+            return await _context.Questions.AnyAsync(q => q.UserId == id && q.ScoreId != null && q.Date == today);
+        }
+
         public async Task<List<User>?> HabitReminder()
         {
             try

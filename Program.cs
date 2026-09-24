@@ -62,28 +62,19 @@ builder.Services.AddScoped<NotifyRepository>();
 builder.Services.AddScoped<WhatsAppUtility>();
 builder.Services.AddScoped<ReportService>();
 builder.Services.AddScoped<ReportRepository>();
+builder.Services.AddScoped<MeditationService>();
+builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<PsychologistService>();
+builder.Services.AddMemoryCache();
+builder.Services.AddHttpClient();
 builder.Configuration.AddJsonFile("appsettings.json");
-var SecretKey = builder.Configuration.GetSection("Settings").GetSection("secretKey").ToString();
-#pragma warning disable CS8604 // Possible null reference argument.
+var SecretKey = builder.Configuration["Key:secretKey"];
+if (string.IsNullOrEmpty(SecretKey))
+{
+    throw new InvalidOperationException("Falta la clave JWT en la configuración (Key:secretKey).");
+}
 var Byteskey = Encoding.UTF8.GetBytes(SecretKey);
-#pragma warning restore CS8604 // Possible null reference argument.
 
-//builder.Services.AddAuthentication(config => {
-//    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-//    config.DefaultChallengeScheme =JwtBearerDefaults.AuthenticationScheme;
-//    //config.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-//}).AddJwtBearer(config => {
-//    config.RequireHttpsMetadata = false;
-//    config.SaveToken = true;
-//    config.TokenValidationParameters = new TokenValidationParameters{
-//        ValidateIssuerSigningKey = true,
-//        IssuerSigningKey = new SymmetricSecurityKey(Byteskey),
-//        ValidateIssuer= false,
-//        ValidateAudience = false,
-//        ValidateLifetime = true,
-//        ClockSkew= TimeSpan.Zero
-//    };
-//});
 builder.Services.AddAuthentication(confg =>
 {
     confg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -96,11 +87,22 @@ builder.Services.AddAuthentication(confg =>
     config.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Byteskey),
+        IssuerSigningKey = new SymmetricSecurityKey(Byteskey){KeyId = "mave-signing-key"},
         ValidateIssuer = false,
         ValidateAudience = false,
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
+    };
+    config.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrEmpty(context.Token))
+            {
+                context.Token = context.Request.Cookies["token"];
+            }
+            return Task.CompletedTask;
+        }
     };
 });
 
@@ -111,7 +113,7 @@ builder.Services.AddTransient<DbAa60a4MavetestContext>();
 
 builder.Services.AddCors(options=>{
     options.AddPolicy ("NuevaPolitica", app=>{
-        app.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        app.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
 var app = builder.Build();

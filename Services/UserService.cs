@@ -2,6 +2,11 @@
 using MAVE.Models;
 using MAVE.Repositories;
 using MAVE.Utilities;
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using dotenv.net;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace MAVE.Services
 {
@@ -28,7 +33,8 @@ namespace MAVE.Services
             }
             if (userDelete != null)
             {
-                await _repo.DeleteUser(userDelete); // delete user of the database 
+                await _repo.DeletePsychologistProfile(userDelete.UserId);
+                await _repo.DeleteUser(userDelete); // delete user of the database
             }
             return true;
         }
@@ -48,6 +54,38 @@ namespace MAVE.Services
 
             await _repo.UpdateUserComplete(userI, user);
             return true;
+        }
+
+        //Update profile method (name, email, phone). Returns 1 ok, 0 invalid, 2 email taken.
+        public async Task<int> UpdateProfile(ProfileUpdateDTO dto, int? id)
+        {
+            if (dto == null || id == null || id <= 0) return 0;
+            if (string.IsNullOrWhiteSpace(dto.UserName) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Phone)) return 0;
+            var userI = await _repo.GetUserByIdFromInfo(id);
+            if (userI == null) return 0;
+            var other = await _repo.GetUserByMail(dto.Email);
+            if (other != null && other.UserId != userI.UserId) return 2;
+            userI.UserName = dto.UserName.Trim();
+            userI.Email = dto.Email.Trim();
+            userI.Phone = dto.Phone.Trim();
+            await _repo.UpdateUser(userI);
+            return 1;
+        }
+
+        //Change password method (verifies current with BCrypt). Returns 1 ok, 0 invalid, 2 wrong current.
+        public async Task<int> ChangePassword(PasswordChangeDTO dto, int? id)
+        {
+            if (dto == null || id == null || id <= 0) return 0;
+            if (string.IsNullOrWhiteSpace(dto.CurrentPassword) ||
+                string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6) return 0;
+            var userI = await _repo.GetUserByIdFromInfo(id);
+            if (userI == null) return 0;
+            if (!BCrypt.Net.BCrypt.Verify(dto.CurrentPassword, userI.Password)) return 2;
+            userI.Password = TokenAndEncipt.HashPass(dto.NewPassword);
+            await _repo.UpdateUser(userI);
+            return 1;
         }
 
         //Create Users Method
@@ -73,24 +111,149 @@ namespace MAVE.Services
                     Addressee = user.Email,
                     Affair = "Register Mave",
                     Contain = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html dir=\"ltr\" xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:o=\"urn:schemas-microsoft-com:office:office\"><head><meta charset=\"UTF-8\"><meta content=\"width=device-width, initial-scale=1\" name=\"viewport\"><meta name=\"x-apple-disable-message-reformatting\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"><meta content=\"telephone=no\" name=\"format-detection\"><title></title><!--[if (mso 16)]><style type=\"text/css\">a {text-decoration: none;}</style><![endif]--><!--[if gte mso 9]><style>sup { font-size: 100% !important; }</style><![endif]--><!--[if gte mso 9]><xml><o:OfficeDocumentSettings><o:AllowPNG></o:AllowPNG><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml><![endif]--><!--[if mso]><style type=\"text/css\">ul {margin: 0 !important;}ol {margin: 0 !important;}li {margin-left: 47px !important;}</style><![endif]--></head><body class=\"body\"><div dir=\"ltr\" class=\"es-wrapper-color\"><!--[if gte mso 9]><v:background xmlns:v=\"urn:schemas-microsoft-com:vml\" fill=\"t\"><v:fill type=\"tile\" color=\"#f6f6f6\"></v:fill></v:background><![endif]--><table class=\"es-wrapper\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td class=\"esd-email-paddings\" valign=\"top\"><table class=\"esd-header-popover es-header\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\"><tbody><tr><td class=\"esd-stripe\" align=\"center\"><table class=\"es-header-body\" width=\"600\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" align=\"center\"><tbody><tr><td class=\"es-p20t es-p20r es-p20l esd-structure\" align=\"left\" bgcolor=\"#1b5091\" style=\"background-color:#1b5091\"><!--[if mso]><table width=\"560\" cellpadding=\"0\" cellspacing=\"0\"><tr><td width=\"246\" valign=\"top\"><![endif]--><table class=\"es-left\" cellspacing=\"0\" cellpadding=\"0\" align=\"left\"><tbody><tr><td width=\"246\" class=\"esd-container-frame es-m-p20b\" align=\"left\"><table cellpadding=\"0\" cellspacing=\"0\" width=\"100%\" role=\"presentation\"><tbody><tr><td align=\"center\" class=\"esd-block-image\" style=\"font-size: 0\"><a target=\"_blank\"><img src=\"https://fiepcgl.stripocdn.email/content/guids/CABINET_28007b800008bc750ac791e848023f4fab0f12f58fa0f1925c5e5067b22cf37f/images/logo_1.png\" alt=\"\" width=\"246\"></a></td></tr></tbody></table></td></tr></tbody></table><!--[if mso]></td><td width=\"20\"></td><td width=\"294\" valign=\"top\"><![endif]--><table class=\"es-right\" cellspacing=\"0\" cellpadding=\"0\" align=\"right\"><tbody><tr><td class=\"esd-container-frame\" width=\"294\" align=\"left\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td align=\"left\" class=\"esd-block-text\"><p></p></td></tr><tr><td align=\"left\" class=\"esd-block-text es-text-7400\"><h1 style=\"color:#ffffff;font-family:tahoma,verdana,segoe,sans-serif\"><strong style=\"font-size:72px;line-height:150%\">MAVE</strong></h1><h1 style=\"color:#ffffff\"><strong style=\"font-size:24px;line-height:150%\">Mente en Armonia, &nbsp;</strong></h1><h1 style=\"color:#ffffff\"><strong><span style=\"font-size:24px;line-height:150%\" class=\"es-text-mobile-size-24\">Vida en Equilibrio.</span><span style=\"font-size:36px;line-height:150%\"></span><span class=\"es-text-mobile-size-36\"></span></strong></h1></td></tr></tbody></table></td></tr></tbody></table><!--[if mso]></td></tr></table><![endif]--></td></tr></tbody></table></td></tr></tbody></table><table class=\"es-content\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\"><tbody><tr><td class=\"esd-stripe\" align=\"center\"><table class=\"es-content-body\" width=\"600\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" align=\"center\"><tbody><tr><td class=\"es-p20t es-p20r es-p20l esd-structure\" align=\"left\" bgcolor=\"#6ea1d4\" style=\"background-color:#6ea1d4\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td class=\"esd-container-frame\" width=\"560\" valign=\"top\" align=\"center\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td align=\"center\" class=\"esd-block-spacer es-p20\" style=\"font-size: 0\"><table border=\"0\" width=\"100%\" height=\"100%\" cellpadding=\"0\" cellspacing=\"0\" class=\"es-spacer\"><tbody><tr><td style=\"border-bottom: 1px solid #cccccc;; background: none; height: 1px; width: 100%; margin: 0px 0px 0px 0px\"></td></tr></tbody></table></td></tr><tr><td align=\"left\" class=\"esd-block-text\"><h2 align=\"center\" style=\"color:#1b5091;font-family:tahoma,verdana,segoe,sans-serif\"><strong>Registro exitoso, Bienvenido a MAVE.</strong></h2></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table><table class=\"esd-footer-popover es-footer\" cellspacing=\"0\" cellpadding=\"0\" align=\"center\"><tbody><tr><td class=\"esd-stripe\" align=\"center\"><table class=\"es-footer-body\" width=\"600\" cellspacing=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" align=\"center\"><tbody><tr><td class=\"esd-structure es-p20t es-p20b es-p20r es-p20l\" align=\"left\" bgcolor=\"#6ea1d4\" style=\"background-color:#6ea1d4\"><table class=\"es-right\" cellspacing=\"0\" cellpadding=\"0\" align=\"right\"><tbody><tr><td class=\"esd-container-frame\" width=\"560\" align=\"left\"><table width=\"100%\" cellspacing=\"0\" cellpadding=\"0\"><tbody><tr><td align=\"center\" class=\"esd-block-button\"><!--[if mso]><a href="+url+" target=\"_blank\" hidden><v:roundrect xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:w=\"urn:schemas-microsoft-com:office:word\" esdevVmlButton href="+url+" style=\"height:49px; v-text-anchor:middle; width:189px\" arcsize=\"50%\" strokecolor=\"#ce3375\" strokeweight=\"2px\" fillcolor=\"#1b5091\"><w:anchorlock></w:anchorlock><center style='color:#ffffff; font-family:tahoma, verdana, segoe, sans-serif; font-size:20px; font-weight:700; line-height:20px;  mso-text-raise:1px'>Ir a MAVE</center></v:roundrect></a><![endif]--><!--[if !mso]><!-- --><span class=\"es-button-border\" style=\"background:#1b5091;border-color:#CE3375\"><a href="+url+" class=\"es-button\" target=\"_blank\" style=\"background:#1b5091;mso-border-alt:10px solid #1b5091;font-weight:bold;font-size:26px;font-family:tahoma,verdana,segoe,sans-serif\">Ir a MAVE</a></span><!--<![endif]--></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody></table></td></tr></tbody>" 
-                }; 
-                _mail.SendEmail(emailRequest);
-                return true;   
+                };
+                try { _mail.SendEmail(emailRequest); } catch { /* el registro no depende del correo */ }
+                return true;
             }
             else
             {
                 return false;
             }
         }
-        public async Task<List<User>?> GetAllUsers(int? id){
+        public async Task<List<UserListDTO>?> GetAllUsers(int? id){
             var user = await _repo.GetUserByIdFromInfo(id);
             if(user==null){
                 return null;
             }else
             {
                 var users = await _repo.GetAllUsers();
-                return users;
+                return users.Select(u => new UserListDTO{
+                    UserId = u.UserId,
+                    UserName = u.UserName,
+                    Email = u.Email,
+                    Phone = u.Phone,
+                    RoleId = u.RoleId,
+                    StatusId = u.StatusId,
+                    HealthProfessionalId = u.HealthProfessionalId
+                }).ToList();
             }
+        }
+
+        public async Task<List<ProfessionalDTO>?> GetPsychologists(){
+            return await _repo.GetProfessionalDirectory();
+        }
+
+        public async Task<User?> GetUserByEmail(string email){
+            return await _repo.GetUserByMail(email);
+        }
+
+        private static bool IsAdmin(User u) => u.RoleId == 1 || u.RoleId == 2;
+
+        // Pacientes vinculados a un psicólogo. Solo el propio psicólogo o admin.
+        public async Task<List<PatientDTO>?> GetMyPatients(string callerEmail, int psychologistId){
+            var caller = await _repo.GetUserByMail(callerEmail);
+            if (caller == null) return null;
+            if (!IsAdmin(caller) && caller.UserId != psychologistId) return null;
+            var users = await _repo.GetPatientsByProfessional(psychologistId);
+            if (users == null) return null;
+            return users.Select(u => new PatientDTO{
+                UserId = u.UserId, UserName = u.UserName, Email = u.Email, Phone = u.Phone
+            }).ToList();
+        }
+
+        // Vincula un paciente con su psicólogo. Solo el propio paciente o admin.
+        // Devuelve 1 ok, 0 inválido, 2 prohibido.
+        public async Task<int> SetPsychologist(string callerEmail, int patientId, int psychologistId){
+            var caller = await _repo.GetUserByMail(callerEmail);
+            if (caller == null) return 0;
+            if (!IsAdmin(caller) && caller.UserId != patientId) return 2;
+            var patient = await _repo.GetUserByIdFromInfo(patientId);
+            if (patient == null) return 0;
+            if (psychologistId <= 0)
+            {
+                patient.HealthProfessionalId = null;
+                await _repo.UpdateUser(patient);
+                return 1;
+            }
+            var psy = await _repo.GetUserByIdFromInfo(psychologistId);
+            if (psy == null || psy.RoleId != 3 || psy.StatusId != 1) return 0;
+            patient.HealthProfessionalId = psychologistId;
+            await _repo.UpdateUser(patient);
+            return 1;
+        }
+
+        //Block / unblock user (StatusId 2/1). Returns 1 ok, 0 invalid.
+        public async Task<int> BlockUser(int? id, bool blocked)
+        {
+            var userI = await _repo.GetUserByIdFromInfo(id);
+            if (userI == null || id == null || id <= 0) return 0;
+            userI.StatusId = (short)(blocked ? 2 : 1);
+            await _repo.UpdateUser(userI);
+            return 1;
+        }
+
+        //Unique professional signup (RoleId=3, pending verification). Returns 1 ok, 0 invalid, 2 taken.
+        public async Task<int> RegisterProfessional(string userName, string email, string phone, string password, string description, IFormFile? credential)
+        {
+            if (string.IsNullOrWhiteSpace(userName) || string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(phone) || string.IsNullOrWhiteSpace(password) || password.Length < 6)
+                return 0;
+            if (await _repo.GetUserByMail(email) != null) return 2;
+            if (await _repo.GetUserByName(userName) != null) return 2;
+            string credUrl = string.Empty;
+            if (credential != null && credential.Length > 0)
+            {
+                if (credential.Length > 10 * 1024 * 1024) return 0;
+                var ext = Path.GetExtension(credential.FileName).ToLowerInvariant();
+                if (ext != ".pdf" && ext != ".jpg" && ext != ".jpeg" && ext != ".png") return 0;
+                string tmp = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString() + ext);
+                try
+                {
+                    await using (var stream = File.Create(tmp))
+                        await credential.CopyToAsync(stream);
+                    DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
+                    Cloudinary cloudinary = new(Environment.GetEnvironmentVariable("CLOUDINARY_URL"));
+                    cloudinary.Api.Secure = true;
+                    var uploadParams = new RawUploadParams()
+                    {
+                        File = new FileDescription(tmp),
+                        UseFilename = true,
+                        UniqueFilename = false,
+                        Overwrite = true
+                    };
+                    var result = cloudinary.Upload(uploadParams);
+                    credUrl = Convert.ToString(result.SecureUrl) ?? string.Empty;
+                }
+                finally
+                {
+                    try { if (File.Exists(tmp)) File.Delete(tmp); } catch { }
+                }
+                if (string.IsNullOrEmpty(credUrl)) return 0;
+            }
+            var userU = new User{
+                Email = email.Trim(),
+                UserName = userName.Trim(),
+                Phone = phone.Trim(),
+                Password = TokenAndEncipt.HashPass(password),
+                RoleId = 3,
+                EvaluationId = 1,
+                StatusId = 1
+            };
+            await _repo.CreateUser(userU);
+            var created = await _repo.GetUserByMail(email);
+            if (created == null) return 0;
+            await _repo.CreatePsychologistProfile(new PsychologistProfile{
+                UserId = created.UserId,
+                Description = (description ?? string.Empty).Trim(),
+                CredentialUrl = string.IsNullOrEmpty(credUrl) ? null : credUrl,
+                Verified = false,
+                UpdatedAt = DateTime.Now
+            });
+            return 1;
+        }
+
+        public async Task<List<PendingPsyDTO>?> GetPendingPsychologists(){
+            return await _repo.GetPendingPsychologists();
         }
 
         //Login Method
@@ -103,6 +266,10 @@ namespace MAVE.Services
             if (UserAct == null)
             {
                 return 0;
+            }
+            if (UserAct.StatusId != 1)
+            {
+                return 3;
             }
             else if (BCrypt.Net.BCrypt.Verify(pass, password))
             {

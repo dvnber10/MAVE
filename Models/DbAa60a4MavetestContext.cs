@@ -19,6 +19,10 @@ public partial class DbAa60a4MavetestContext : DbContext
 
     public virtual DbSet<Auditory> Auditories { get; set; }
 
+    public virtual DbSet<ChatMessage> ChatMessages { get; set; }
+
+    public virtual DbSet<PsychologistProfile> PsychologistProfiles { get; set; }
+
     public virtual DbSet<CatArticleType> CatArticleTypes { get; set; }
 
     public virtual DbSet<CatEvaluation> CatEvaluations { get; set; }
@@ -179,6 +183,48 @@ public partial class DbAa60a4MavetestContext : DbContext
                 .HasConstraintName("FK_MOOD_USER");
         });
 
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.HasKey(e => e.MessageId);
+
+            entity.ToTable("CHAT_MESSAGE");
+
+            entity.Property(e => e.Text)
+                .HasMaxLength(500);
+
+            entity.Property(e => e.Date).HasColumnType("datetime");
+
+            entity.HasOne(d => d.Sender).WithMany()
+                .HasForeignKey(d => d.SenderId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_CHAT_SENDER");
+
+            entity.HasOne(d => d.Receiver).WithMany()
+                .HasForeignKey(d => d.ReceiverId)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasConstraintName("FK_CHAT_RECEIVER");
+        });
+
+        modelBuilder.Entity<PsychologistProfile>(entity =>
+        {
+            entity.HasKey(e => e.UserId);
+
+            entity.ToTable("PSYCHOLOGIST_PROFILE");
+
+            entity.Property(e => e.Description)
+                .HasMaxLength(500);
+
+            entity.Property(e => e.CredentialUrl)
+                .HasMaxLength(500);
+
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PSYPROFILE_USER");
+        });
+
         modelBuilder.Entity<Question>(entity =>
         {
             entity.HasKey(e => e.QuestionId).HasName("PK_HABIT");
@@ -246,4 +292,9 @@ public partial class DbAa60a4MavetestContext : DbContext
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+    partial void OnModelCreatingPartial(ModelBuilder modelBuilder)
+    {
+        MAVE.Seed.SeedModelBuilder.Configure(modelBuilder);
+    }
 }

@@ -76,7 +76,61 @@ namespace MAVE.Controllers
             }
             catch(Exception e)
             {
-                return BadRequest("Algo salió mal: "+e);            
+                return BadRequest("Algo salió mal: "+e);
+            }
+        }
+
+        /// <summary>
+        /// Chequeo PHQ-4 (4 ítems 0-3: 2 depresión + 2 ansiedad). 1 por día.
+        /// POST /api/mood/phq4/{id}
+        /// </summary>
+        [HttpPost]
+        [Authorize]
+        [Route("phq4/{id}")]
+        public async Task<IActionResult> SetPhq4(Phq4DTO dto, int? id)
+        {
+            int res = await _serv.SetPhq4(dto, id);
+            if (res == 1) return Ok("Chequeo guardado");
+            else if (res == 2) return BadRequest("Ya registraste tu chequeo hoy");
+            else return BadRequest("Datos inválidos");
+        }
+
+        /// <summary>
+        /// Historial PHQ-4 (fecha, D, A, total) para gráficas y reporte clínico.
+        /// GET /api/mood/phq4-history/{id}
+        /// </summary>
+        [HttpGet]
+        [Authorize]
+        [Route("phq4-history/{id}")]
+        public async Task<IActionResult> Phq4History(int? id)
+        {
+            try
+            {
+                return Ok(await _serv.Phq4History(id, 30));
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Algo salió mal: " + e.Message);
+            }
+        }
+
+        /// <summary>
+        /// Análisis psicológico del seguimiento: promedio, distribución,
+        /// volatilidad, racha, tendencia e índice compuesto 0-100.
+        /// GET /api/mood/analysis/{id}
+        /// </summary>
+        [HttpGet]
+        [Authorize]
+        [Route("analysis/{id}")]
+        public async Task<IActionResult> Analysis(int? id)
+        {
+            try
+            {
+                return Ok(await _serv.Analysis(id));
+            }
+            catch (Exception e)
+            {
+                return BadRequest("Algo salió mal: " + e.Message);
             }
         }
 

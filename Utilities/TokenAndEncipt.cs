@@ -16,7 +16,7 @@ namespace MAVE.Utilities
             return PassEn;
         }
         public string GenerarToken(string mail, string rol){
-            var SecretKey = _config.GetSection("Key").GetSection("secretKey").ToString();
+            var SecretKey = _config["Key:secretKey"];
             #pragma warning disable CS8604 // Possible null reference argument.
             var security= Encoding.ASCII.GetBytes(SecretKey);
             #pragma warning restore CS8604 // Possible null reference argument.
@@ -26,7 +26,7 @@ namespace MAVE.Utilities
                     new Claim(ClaimTypes.Role,rol)
                 }),
                 Expires = DateTime.UtcNow.AddHours(2),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(security), SecurityAlgorithms.HmacSha256Signature) 
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(security){KeyId = "mave-signing-key"}, SecurityAlgorithms.HmacSha256Signature) 
             };
             var TokenHandler = new JwtSecurityTokenHandler();
             var token = TokenHandler.CreateToken(tokenDescriptor);

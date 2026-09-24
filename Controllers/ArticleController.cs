@@ -39,7 +39,7 @@ namespace MAVE.Controllers
         [HttpPost]
         [Authorize]
         [Route("PostArticle/{id}")]
-        public async Task<IActionResult> PostArticle(int? id, [FromBody] ArticleWhitImageDTO art)
+        public async Task<IActionResult> PostArticle(int? id, [FromForm] ArticleWhitImageDTO art)
         {
             try
             {
@@ -60,7 +60,7 @@ namespace MAVE.Controllers
         [HttpPut]
         [Authorize]
         [Route("PutArticle/{id}")]
-        public async Task<IActionResult> PutArticle(int? id, [FromBody] ArticleWhitImageDTO art)
+        public async Task<IActionResult> PutArticle(int? id, [FromForm] ArticleWhitImageDTO art)
         {
             try
             {

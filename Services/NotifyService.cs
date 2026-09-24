@@ -43,5 +43,45 @@ namespace MAVE.Services
                 return 1;
             }
         }
+
+        private static readonly string[] _tips = new string[]
+        {
+            "Respira 4-7-8 por 2 minutos: inhala 4s, sostén 7s, exhala 8s.",
+            "Sal a caminar 10 minutos sin pantallas y nota 3 sonidos.",
+            "Escribe 3 cosas por las que agradeces hoy.",
+            "Toma un vaso de agua pausado, a sorbos conscientes.",
+            "Estira cuello y hombros 2 minutos entre actividades.",
+            "Escucha un sonido de lluvia 5 minutos con los ojos cerrados.",
+            "Ordena un espacio pequeño: el orden externo calma la mente.",
+            "Escribe a alguien que aprecies, solo para saludar.",
+            "Duerme hoy 30 minutos más temprano que ayer.",
+            "Haz 5 minutos de meditación con un sonido de esta app.",
+            "Anota qué emoción domina tu día y qué la disparó.",
+            "Come una fruta despacio, notando sabor y textura.",
+            "Reduce 15 minutos tu red social más usada hoy.",
+            "Repite en voz alta: estoy avanzando un día a la vez."
+        };
+
+        /// <summary>
+        /// Sugerencia diaria rotativa + pendientes de hoy (ánimo/hábitos).
+        /// </summary>
+        public async Task<MAVE.DTO.DailySuggestionDTO> DailySuggestion(int? id)
+        {
+            int uid = id ?? 0;
+            bool pendingMood = true;
+            bool pendingHabits = true;
+            if (uid > 0)
+            {
+                pendingMood = !await _repo.HasMoodToday(uid);
+                pendingHabits = !await _repo.HasHabitsToday(uid);
+            }
+            string tip = _tips[DateTime.Now.DayOfYear % _tips.Length];
+            return new MAVE.DTO.DailySuggestionDTO
+            {
+                Suggestion = tip,
+                PendingMood = pendingMood,
+                PendingHabits = pendingHabits
+            };
+        }
     }
 }

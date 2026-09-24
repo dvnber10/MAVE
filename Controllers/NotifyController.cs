@@ -30,5 +30,23 @@ namespace MAVE.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        /// <summary>
+        /// Sugerencia diaria rotativa + pendientes de hoy para la campana web.
+        /// GET /api/notify/daily-suggestion/{id}
+        /// </summary>
+        [HttpGet("daily-suggestion/{id}")]
+        public async Task<IActionResult> DailySuggestion(int? id)
+        {
+            try
+            {
+                var dto = await _serv.DailySuggestion(id);
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Algo salió mal: " + ex.Message);
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using MAVE.Services;
 using MAVE.DTO;
 using Microsoft.AspNetCore.Authorization;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 
 
 namespace MAVE.Controllers
@@ -20,6 +21,36 @@ namespace MAVE.Controllers
             _config = configuration;
             _serv = serv;
             _token = token;
+        }
+        private void SetTokenCookie(string token)
+        {
+            var secure = Request.IsHttps;
+            Response.Cookies.Append("token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = secure,
+                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
+                Path = "/",
+                Expires = DateTimeOffset.UtcNow.AddHours(2)
+            });
+        }
+        private void DeleteTokenCookie()
+        {
+            var secure = Request.IsHttps;
+            Response.Cookies.Delete("token", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = secure,
+                SameSite = secure ? SameSiteMode.None : SameSiteMode.Lax,
+                Path = "/"
+            });
+        }
+        [HttpPost]
+        [Route("LogOut")]
+        public IActionResult LogOut()
+        {
+            DeleteTokenCookie();
+            return Ok("Sesión cerrada");
         }
         [HttpDelete]
         [Authorize]
@@ -54,6 +85,77 @@ namespace MAVE.Controllers
             
         }
 
+        [HttpPut]
+        [Authorize]
+        [Route("UpdateProfile/{id}")]
+        public async Task<IActionResult> UpdateProfile([FromBody] ProfileUpdateDTO dto, int? id){
+            int res = await _serv.UpdateProfile(dto, id);
+            if (res == 1) return Ok("perfil actualizado correctamente");
+            else if (res == 2) return BadRequest("Ese correo ya está en uso");
+            else return BadRequest("Datos inválidos");
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("ChangePassword/{id}")]
+        public async Task<IActionResult> ChangePassword([FromBody] PasswordChangeDTO dto, int? id){
+            int res = await _serv.ChangePassword(dto, id);
+            if (res == 1) return Ok("contraseña actualizada correctamente");
+            else if (res == 2) return BadRequest("La contraseña actual no es correcta");
+            else return BadRequest("Datos inválidos (mínimo 6 caracteres)");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("MyPatients/{psychologistId}")]
+        public async Task<IActionResult> MyPatients(int psychologistId){
+            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty;
+            var list = await _serv.GetMyPatients(email, psychologistId);
+            if (list == null) return StatusCode(StatusCodes.Status403Forbidden, "No autorizado");
+            return Ok(list);
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("SetPsychologist/{id}")]
+        public async Task<IActionResult> SetPsychologist([FromBody] SetPsychologistDTO dto, int? id){
+            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value ?? string.Empty;
+            int res = await _serv.SetPsychologist(email, id ?? 0, dto.PsychologistId);
+            if (res == 1) return Ok("psicólogo asignado correctamente");
+            else if (res == 2) return StatusCode(StatusCodes.Status403Forbidden, "No autorizado");
+            else return BadRequest("Datos inválidos");
+        }
+
+        public class BlockDTO
+        {
+            public bool Blocked { get; set; }
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("BlockUser/{id}")]
+        public async Task<IActionResult> BlockUser([FromBody] BlockDTO dto, int? id){
+            if (await _serv.BlockUser(id, dto.Blocked) == 1)
+                return Ok(dto.Blocked ? "cuenta bloqueada" : "cuenta desbloqueada");
+            return BadRequest("Datos inválidos");
+        }
+
+        [HttpGet]
+        [Authorize]
+        [Route("PendingPsychologists")]
+        public async Task<IActionResult> PendingPsychologists(){
+            return Ok(await _serv.GetPendingPsychologists());
+        }
+
+        [HttpPost]
+        [Route("RegisterProfessional")]
+        public async Task<IActionResult> RegisterProfessional([FromForm] ProfessionalSignupDTO dto, Microsoft.AspNetCore.Http.IFormFile? credential){
+            int res = await _serv.RegisterProfessional(dto.UserName, dto.Email, dto.Phone, dto.Password, dto.Description, credential);
+            if (res == 1) return Ok("registro recibido, pendiente de verificación");
+            else if (res == 2) return BadRequest("Ese correo o nombre ya está en uso");
+            else return BadRequest("Datos inválidos");
+        }
+
         [HttpPost]
         [Route("SigIn")]
         public async Task<IActionResult> SigIn(UserSigInDTO user){
@@ -67,6 +169,7 @@ namespace MAVE.Controllers
             {
                 var userA = await _serv.GetUserByMail(user.Email);
                 var token = _token.GenerarToken(user.Email,Convert.ToString(userA.UserId));
+                SetTokenCookie(token);
                 var userToken = new JsonFile{
                     Id = Convert.ToString(userA.UserId),
                     Token = token,
@@ -98,6 +201,7 @@ namespace MAVE.Controllers
             {
                 var userAct =await _serv.GetUserByMail(rest.Email);
                 var token = _token.GenerarToken(rest.Email,Convert.ToString(userAct.UserId));
+                SetTokenCookie(token);
                 var userToken = new JsonFile{
                     Id = Convert.ToString(userAct.UserId),
                     Token = token,
@@ -107,14 +211,22 @@ namespace MAVE.Controllers
                 var result = JsonSerializer.Serialize(userToken);
                 return StatusCode(StatusCodes.Status200OK , result);
             }
-            else 
+            else if (res == 3)
+            {
+                var userToken = new JsonFile{
+                    Message = "Cuenta bloqueada, contacta al administrador"
+                };
+                var result = JsonSerializer.Serialize(userToken);
+                return StatusCode(StatusCodes.Status403Forbidden, result);
+            }
+            else
             {
                 var userToken = new JsonFile{
                     Message = "Usuario y contraseña incorrectas"
                 };
                 var result = JsonSerializer.Serialize(userToken);
                 return StatusCode(StatusCodes.Status401Unauthorized, result);
-            } 
+            }
         }
         [HttpPost]
         [Route ("PasswordRecovery")]
@@ -148,7 +260,21 @@ namespace MAVE.Controllers
             try
             {
                 var user = await _serv.GetUserById(id);
-                var result = JsonSerializer.Serialize(user);
+                if (user == null)
+                {
+                    return NotFound("Usuario no encontrado");
+                }
+                var result = JsonSerializer.Serialize(new
+                {
+                    user.UserId,
+                    user.UserName,
+                    user.Email,
+                    user.Phone,
+                    user.RoleId,
+                    user.EvaluationId,
+                    user.StatusId,
+                    user.HealthProfessionalId
+                });
                 return Ok(result);   
             }
             catch (System.Exception ex)
@@ -170,6 +296,27 @@ namespace MAVE.Controllers
                 }else
                 {
                     return Ok(users);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest,ex.Message);
+                throw;
+            }
+        }
+        [HttpGet]
+        [Authorize]
+        [Route ("GetPsychologists")]
+        public async Task<IActionResult> GetPsychologists (){
+            try
+            {
+                var pros = await _serv.GetPsychologists();
+                if (pros == null)
+                {
+                    return StatusCode(StatusCodes.Status400BadRequest,"Hubo un error al consultar los datos");
+                }else
+                {
+                    return Ok(pros);
                 }
             }
             catch (System.Exception ex)

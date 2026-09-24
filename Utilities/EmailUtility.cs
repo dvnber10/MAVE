@@ -15,8 +15,22 @@ namespace MAVE.Utilities
         }
         public void SendEmail(EmailDTO request)
         {
+            var userName = _config["Email:UserName"];
+            var passWord = _config["Email:PassWord"];
+            var host = _config["Email:Host"];
+            var portText = _config["Email:Port"];
+
+            if (string.IsNullOrEmpty(userName) || string.IsNullOrEmpty(passWord) || string.IsNullOrEmpty(host) || string.IsNullOrEmpty(portText))
+            {
+                throw new InvalidOperationException("Faltan los datos de configuración del correo.");
+            }
+            if (!int.TryParse(portText, out var port))
+            {
+                throw new InvalidOperationException("El puerto del correo no es un número válido.");
+            }
+
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_config.GetSection("Email:UserName").Value));
+            email.From.Add(MailboxAddress.Parse(userName));
 
             // Separar las direcciones de correo destinatarias por comas y agregarlas al campo "To"
             foreach (var destinatario in request.Addressee.Split(','))
@@ -31,13 +45,8 @@ namespace MAVE.Utilities
             };
 
             using var smtp = new SmtpClient();
-            smtp.Connect(
-                _config.GetSection("Email:Host").Value,
-                Convert.ToInt32(_config.GetSection("Email:Port").Value),
-                SecureSocketOptions.StartTls
-            );
-
-            smtp.Authenticate(_config.GetSection("Email:UserName").Value, _config.GetSection("Email:PassWord").Value);
+            smtp.Connect(host, port, SecureSocketOptions.StartTls);
+            smtp.Authenticate(userName, passWord);
 
             smtp.Send(email);
             smtp.Disconnect(true);

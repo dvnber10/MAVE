@@ -83,11 +83,25 @@ namespace MAVE.Repositories
             try
             {
                 MoodGraphicDTO? mood = new MoodGraphicDTO();
-                mood.Score1 = await _context.Moods.Where(m => m.MoodScore == 1 && m.UserId == id).CountAsync();
-                mood.Score2 = await _context.Moods.Where(m => m.MoodScore == 2 && m.UserId == id).CountAsync();
-                mood.Score3 = await _context.Moods.Where(m => m.MoodScore == 3 && m.UserId == id).CountAsync();
-                mood.Score4 = await _context.Moods.Where(m => m.MoodScore == 4 && m.UserId == id).CountAsync();
-                mood.Score5 = await _context.Moods.Where(m => m.MoodScore == 5 && m.UserId == id).CountAsync();
+                var phq = await _context.Auditories
+                    .Where(a => a.UserId == id && a.Action == "MOOD_PHQ4")
+                    .ToListAsync();
+                var phqKeys = new HashSet<string>(phq.Select(a => {
+                    int t = -1;
+                    foreach (var part in (a.NewValue ?? string.Empty).Split(','))
+                    {
+                        var kv = part.Split(':');
+                        if (kv.Length == 2 && kv[0] == "T") int.TryParse(kv[1], out t);
+                    }
+                    return a.Date.Date.ToString("yyyyMMdd") + "#" + t;
+                }));
+                var moods = await _context.Moods.Where(m => m.UserId == id).ToListAsync();
+                var faces = moods.Where(m => !phqKeys.Contains(m.Date.Date.ToString("yyyyMMdd") + "#" + m.MoodScore)).ToList();
+                mood.Score1 = faces.Count(m => m.MoodScore == 1);
+                mood.Score2 = faces.Count(m => m.MoodScore == 2);
+                mood.Score3 = faces.Count(m => m.MoodScore == 3);
+                mood.Score4 = faces.Count(m => m.MoodScore == 4);
+                mood.Score5 = faces.Count(m => m.MoodScore == 5);
                 return mood;
             }
             catch (Exception)
