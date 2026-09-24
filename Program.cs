@@ -8,6 +8,7 @@ using MAVE.Utilities;
 using MAVE.Services;
 using System.ComponentModel;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -116,6 +117,12 @@ builder.Services.AddCors(options=>{
         app.SetIsOriginAllowed(_ => true).AllowAnyHeader().AllowAnyMethod().AllowCredentials();
     });
 });
+builder.Services.Configure<ForwardedHeadersOptions>(o =>
+{
+    o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    o.KnownNetworks.Clear();
+    o.KnownProxies.Clear();
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -125,6 +132,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseForwardedHeaders();
 app.UseCors("NuevaPolitica");
 
 app.UseHttpsRedirection();
